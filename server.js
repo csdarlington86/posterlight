@@ -73,7 +73,7 @@ function fetchDetails(client, session) {
     castCache[key] = parser.parseCast(json);
     guidCache[key] = parser.parseGuids(json);
     delete factCache[session.ratingKey];   // look again, now that the ids are known
-  }, function () {
+  }).catch(function () {
     delete castCache[key];
   });
 }
@@ -137,11 +137,14 @@ function poll() {
     sessions.forEach(function (session) { fetchDetails(client, session); });
     savePlayers();
     logPlexState(true);
-  }, function (err) {
+  }).catch(function (err) {
     if (client !== plex) return;
     tracker.update(null);
     logPlexState(false, err.message);
+  }).catch(function (err) {
+    console.error('Unexpected error while reading Plex: ' + err.message);
   }).then(function () {
+    // Whatever happened above, the next poll is always scheduled.
     setTimeout(poll, POLL_MS);
   });
 }
@@ -161,7 +164,7 @@ function refreshLibrary() {
     libraryIndex = buildLibraryIndex(items);
     fallbackCache = {};
     console.log('Library index ready: ' + items.length + ' titles.');
-  }, function () { /* the next refresh tries again */ });
+  }).catch(function () { /* the next refresh tries again */ });
 }
 
 // Starts (or restarts) everything that depends on the Plex settings.

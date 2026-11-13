@@ -69,3 +69,36 @@ test('a non-image answer from the transcoder rejects', async function () {
   });
   await assert.rejects(client(f).getImage('/x', 100, 100), /image/);
 });
+
+test('a body that stalls is cut off by the timeout', async function () {
+  var f = function (url, opts) {
+    return Promise.resolve({
+      ok: true, status: 200, headers: { get: function () { return 'application/json'; } },
+      json: function () {
+        return new Promise(function (resolve, reject) {
+          opts.signal.addEventListener('abort', function () {
+            var e = new Error('aborted'); e.name = 'AbortError'; reject(e);
+          });
+        });
+      }
+    });
+  };
+  var c = createPlexClient({ plexUrl: 'http://x:32400', plexToken: 'SECRET123', fetchImpl: f, timeoutMs: 40 });
+  await assert.rejects(c.getJson('/status/sessions'), /no answer in 40 ms/);
+});
+
+test('requests never follow a redirect, so the token cannot be sent to another host', async function () {
+  var f = fakeFetch(jsonResponse({}));
+  await client(f).getJson('/status/sessions');
+  assert.strictEqual(f.calls[0].opts.redirect, 'manual');
+  var redirected = fakeFetch({ ok: false, status: 302, headers: { get: function () { return null; } } });
+  await assert.rejects(client(redirected).getJson('/status/sessions'), /302/);
+});
+
+test('the body of a refused answer is released', async function () {
+  var cancelled = 0;
+  var f = fakeFetch({ ok: false, status: 401, headers: { get: function () { return null; } },
+    body: { cancel: function () { cancelled += 1; return Promise.resolve(); } } });
+  await assert.rejects(client(f).getJson('/status/sessions'), /401/);
+  assert.strictEqual(cancelled, 1);
+});

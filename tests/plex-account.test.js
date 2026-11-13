@@ -74,3 +74,9 @@ test('listServers keeps only servers and orders the connections local first', as
 test('listServers survives an odd answer', async function () {
   assert.deepStrictEqual(await account(fake({ 'GET https://plex.test/api/v2/resources': { nope: true } })).listServers('t'), []);
 });
+
+test('plex.tv requests never follow a redirect', async function () {
+  var f = fake({ 'GET https://plex.test/api/v2/resources': [] });
+  await account(f).listServers('ACCOUNT-TOKEN');
+  assert.strictEqual(f.calls[0].opts.redirect, 'manual');
+});

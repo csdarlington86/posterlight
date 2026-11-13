@@ -325,8 +325,9 @@
         state.status = data;
       }
       state.answered = true;
-      render();
+      // Schedule the next request first. If drawing ever fails, the screen still recovers by itself.
       window.setTimeout(poll, POLL_MS);
+      try { render(); } catch (e) { /* the next poll draws again */ }
     });
   }
 
