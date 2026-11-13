@@ -9,7 +9,7 @@
   var PLAYERS_REFRESH_MS = 5000;
   var FAILURES_BEFORE_DOT = 3;
   var STORAGE_KEY = 'posterlight.player';
-  var SCREENS = ['setup', 'idle', 'now', 'intermission'];
+  var SCREENS = ['setup', 'unconfigured', 'idle', 'now', 'intermission'];
 
   function byId(id) { return document.getElementById(id); }
 
@@ -307,17 +307,14 @@
     var awake = now - state.lastTapMs < L.TAP_WAKE_MS;
     setClass(el.gear, 'is-shown', awake && view.screen !== 'setup');
     var plexLost = !!status && status.plexOk === false;
-    setClass(el.offline, 'is-shown', state.failures >= FAILURES_BEFORE_DOT || plexLost);
+    setClass(el.offline, 'is-shown', state.failures >= FAILURES_BEFORE_DOT || (plexLost && view.screen !== 'unconfigured'));
   }
 
   // ---------- talking to the helper ----------
 
   function poll() {
-    if (!state.player) {
-      window.setTimeout(poll, POLL_MS);
-      return;
-    }
-    var url = 'api/status?player=' + encodeURIComponent(state.player);
+    // With no player chosen yet we still ask, to learn whether the helper itself is set up.
+    var url = 'api/status?player=' + encodeURIComponent(state.player || 'any');
     if (demo) url += '&demo=' + encodeURIComponent(demo);
     getJson(url, function (err, data) {
       if (err || !data || typeof data !== 'object') {

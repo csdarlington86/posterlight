@@ -29,6 +29,12 @@ test('the setup screen is never dimmed', function () {
   assert.strictEqual(L.computeView(null, ctx({ hasPlayer: false })).overlay, 'full');
 });
 
+test('a helper that is not set up yet shows the unconfigured screen at full brightness', function () {
+  var v = L.computeView({ state: 'setup', media: null, fact: null }, ctx({ hasPlayer: false }));
+  assert.deepStrictEqual(v, { screen: 'unconfigured', overlay: 'full', card: 'hidden' });
+  assert.strictEqual(L.computeView({ state: 'setup' }, ctx()).screen, 'unconfigured');
+});
+
 test('screen: idle with no status or an idle status', function () {
   assert.strictEqual(L.computeView(null, ctx()).screen, 'idle');
   assert.strictEqual(L.computeView(status({ state: 'idle', media: null }), ctx()).screen, 'idle');

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PosterLight setup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14110F">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="stylesheet" href="css/setup.css">
+</head>
+<body>
+<main class="wrap">
+  <img class="logo" src="icons/logo.svg" alt="">
+  <h1>PosterLight</h1>
+  <p class="tagline">Now showing at home.</p>
+
+  <!-- Shown only when this page is opened from another device -->
+  <section id="step-code" class="panel" hidden>
+    <h2>Enter the setup code</h2>
+    <p>Look at the PosterLight window on the helper computer. It shows a 6-digit setup code.</p>
+    <label for="code">Setup code</label>
+    <input id="code" type="text" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="000000">
+    <button id="code-go" type="button" class="primary">Continue</button>
+    <p id="code-error" class="error" hidden></p>
+  </section>
+
+  <section id="step-signin" class="panel" hidden>
+    <h2 id="signin-title">Connect to your Plex server</h2>
+    <p id="signin-text">Sign in on Plex's own page. PosterLight never sees your password.</p>
+    <button id="signin-go" type="button" class="primary">Sign in with Plex</button>
+    <p id="signin-wait" class="note" hidden>Waiting for you to sign in. A Plex page opened in a new tab.
+      <a id="signin-link" href="#" target="_blank" rel="noopener">Open it again</a></p>
+    <p id="signin-error" class="error" hidden></p>
+
+    <details id="manual">
+      <summary>Enter the address and token by hand instead</summary>
+      <label for="manual-url">Plex address</label>
+      <input id="manual-url" type="url" autocomplete="off" placeholder="http://192.168.1.10:32400">
+      <label for="manual-token">Plex token</label>
+      <input id="manual-token" type="password" autocomplete="off">
+      <button id="manual-go" type="button">Connect</button>
+      <p id="manual-error" class="error" hidden></p>
+    </details>
+  </section>
+
+  <section id="step-servers" class="panel" hidden>
+    <h2>Choose your Plex server</h2>
+    <div id="server-list"></div>
+    <p id="server-error" class="error" hidden></p>
+  </section>
+
+  <section id="step-done" class="panel" hidden>
+    <h2>PosterLight is connected</h2>
+    <p id="done-text">The helper now follows your Plex server.</p>
+    <p>Next, open this address on each tablet or phone, and add it to the home screen:</p>
+    <p class="address" id="device-address"></p>
+    <p><a id="open-poster" class="button primary" href="./">Open the poster on this screen</a></p>
+    <p class="note"><button id="again" type="button" class="link">Connect to a different server</button></p>
+  </section>
+
+  <p class="foot">PosterLight is a community project. It is not affiliated with Plex.</p>
+</main>
+<script src="js/setup.js"></script>
+</body>
+</html>

@@ -52,3 +52,25 @@ test('a missing file works when env has everything', function () {
 test('a file that is not valid JSON throws a message naming config.json', function () {
   assert.throws(function () { loadConfig(tmpFile('{nope'), {}); }, /config\.json/);
 });
+
+test('saveConfig writes a file that loadConfig reads back, and keeps the port', function () {
+  var config = require('../lib/config');
+  var file = tmpFile({ plexUrl: 'http://old:32400', plexToken: 'old', port: 9001 });
+  config.saveConfig(file, { plexUrl: 'http://new:32400', plexToken: 'new' });
+  assert.deepStrictEqual(loadConfig(file, {}), { plexUrl: 'http://new:32400', plexToken: 'new', port: 9001 });
+});
+
+test('saveConfig creates the folder and the file when they are missing', function () {
+  var config = require('../lib/config');
+  var file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'pl-config-')), 'deep', 'config.json');
+  config.saveConfig(file, { plexUrl: 'http://new:32400', plexToken: 'new' });
+  assert.strictEqual(loadConfig(file, {}).port, 8686);
+});
+
+test('loadPort works even when the rest of the config is missing', function () {
+  var config = require('../lib/config');
+  assert.strictEqual(config.loadPort('/nonexistent/config.json', {}), 8686);
+  assert.strictEqual(config.loadPort('/nonexistent/config.json', { PORT: '9100' }), 9100);
+  assert.strictEqual(config.loadPort(tmpFile({ port: 9002 }), {}), 9002);
+  assert.strictEqual(config.loadPort(tmpFile('{nope'), {}), 8686);
+});

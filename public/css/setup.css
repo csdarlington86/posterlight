@@ -1,0 +1,60 @@
+/* PosterLight setup page. It runs on a computer or a recent phone, not on the old poster tablets. */
+@font-face {
+  font-family: 'Limelight';
+  src: url('../fonts/limelight-400.woff2') format('woff2'), url('../fonts/limelight-400.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/inter-400.woff2') format('woff2'), url('../fonts/inter-400.woff') format('woff');
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/inter-600.woff2') format('woff2'), url('../fonts/inter-600.woff') format('woff');
+  font-weight: 600; font-display: swap;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; background: #14110F; color: #F6EFE2; }
+body { font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 17px; line-height: 1.45; }
+.wrap { max-width: 30em; margin: 0 auto; padding: 2.2em 1.2em 3em; text-align: center; }
+.logo { width: 6em; height: 6em; }
+h1 { margin: 0.2em 0 0; font-family: 'Limelight', Georgia, serif; font-weight: 400; font-size: 2.4em; color: #FFC857; }
+.tagline { margin: 0 0 1.6em; opacity: 0.8; }
+.panel {
+  text-align: left; padding: 1.3em 1.3em 1.4em; margin: 0 0 1em;
+  border: 1px solid #7A5C1E; border-radius: 0.8em; background: #1D1814;
+}
+h2 { margin: 0 0 0.5em; font-size: 1.2em; font-weight: 600; }
+p { margin: 0 0 0.9em; }
+label { display: block; margin: 0.9em 0 0.3em; font-weight: 600; font-size: 0.9em; }
+input {
+  width: 100%; padding: 0.7em 0.8em; font: inherit; color: #F6EFE2;
+  background: #14110F; border: 1px solid #7A5C1E; border-radius: 0.5em;
+}
+input:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid #FFE9A8; outline-offset: 2px; }
+#code { font-size: 1.5em; letter-spacing: 0.3em; text-align: center; }
+button, .button {
+  display: inline-block; margin-top: 1em; padding: 0.75em 1.3em; font: inherit; font-weight: 600;
+  color: #F6EFE2; background: #2A211A; border: 1px solid #7A5C1E; border-radius: 0.6em;
+  cursor: pointer; text-decoration: none;
+}
+button.primary, .button.primary { color: #14110F; background: #FFC857; border-color: #FFC857; }
+button:disabled { opacity: 0.5; cursor: default; }
+button.link { margin: 0; padding: 0; background: none; border: 0; color: #FFC857; font-weight: 400; text-decoration: underline; }
+a { color: #FFC857; }
+.error { margin: 0.9em 0 0; color: #FFB4A2; }
+.note { margin: 0.9em 0 0; font-size: 0.9em; color: #C9BFAE; }
+details { margin-top: 1.4em; padding-top: 1em; border-top: 1px solid #3A2E22; }
+summary { cursor: pointer; color: #C9BFAE; }
+.server {
+  display: block; width: 100%; margin: 0 0 0.6em; text-align: left;
+}
+.server small { display: block; font-weight: 400; color: #C9BFAE; }
+.address {
+  padding: 0.7em; text-align: center; font-weight: 600; font-size: 1.1em; word-break: break-all;
+  color: #FFE9A8; background: #14110F; border: 1px dashed #7A5C1E; border-radius: 0.5em;
+  -webkit-user-select: all; user-select: all;
+}
+.foot { margin-top: 2em; font-size: 0.8em; color: #7A6A55; }

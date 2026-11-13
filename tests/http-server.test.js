@@ -146,3 +146,96 @@ test('/healthz reports Plex state; other methods are refused', async function ()
     assert.strictEqual(res.statusCode, 405);
   });
 });
+
+// ---- setup routes ----
+
+function post(ctx, rawPath, body, headers) {
+  return new Promise(function (resolve, reject) {
+    var data = typeof body === 'string' ? body : JSON.stringify(body);
+    var h = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) };
+    Object.keys(headers || {}).forEach(function (k) { h[k] = headers[k]; });
+    var req = http.request({ host: '127.0.0.1', port: ctx.port, path: rawPath, method: 'POST', headers: h }, function (res) {
+      var chunks = [];
+      res.on('data', function (c) { chunks.push(c); });
+      res.on('end', function () {
+        var text = Buffer.concat(chunks).toString();
+        var json = null;
+        try { json = JSON.parse(text); } catch (e) { /* not JSON */ }
+        resolve({ status: res.statusCode, headers: res.headers, json: json });
+      });
+    });
+    req.on('error', reject);
+    req.end(data);
+  });
+}
+
+function fakeSetup() {
+  var seen = [];
+  return {
+    seen: seen,
+    authorize: function (info) {
+      seen.push({ authorize: info });
+      return info.header === '1' ? { ok: true } : { ok: false, status: 403, error: 'bad-request' };
+    },
+    run: function (step, body) {
+      seen.push({ step: step, body: body });
+      return Promise.resolve({ status: 200, json: { ran: step } });
+    }
+  };
+}
+
+test('POST /api/setup/<step> passes the caller details to the setup rules, then runs the step', async function () {
+  var setup = fakeSetup();
+  await withServer({ setup: setup }, async function (ctx) {
+    var res = await post(ctx, '/api/setup/manual', { plexUrl: 'http://x', plexToken: 't' },
+      { 'X-PosterLight': '1', 'X-Setup-Code': '123456' });
+    assert.strictEqual(res.status, 200);
+    assert.deepStrictEqual(res.json, { ran: 'manual' });
+    assert.strictEqual(res.headers['cache-control'], 'no-store');
+    var info = setup.seen[0].authorize;
+    assert.strictEqual(info.header, '1');
+    assert.strictEqual(info.code, '123456');
+    assert.match(info.remoteAddress, /127\.0\.0\.1/);
+    assert.match(info.host, /^127\.0\.0\.1:\d+$/);
+    assert.deepStrictEqual(setup.seen[1], { step: 'manual', body: { plexUrl: 'http://x', plexToken: 't' } });
+  });
+});
+
+test('a refused setup request never reaches the step', async function () {
+  var setup = fakeSetup();
+  await withServer({ setup: setup }, async function (ctx) {
+    var res = await post(ctx, '/api/setup/manual', {});
+    assert.strictEqual(res.status, 403);
+    assert.deepStrictEqual(res.json, { error: 'bad-request' });
+    assert.strictEqual(setup.seen.length, 1);
+  });
+});
+
+test('setup refuses bodies that are not JSON, too large, or not sent as JSON', async function () {
+  var setup = fakeSetup();
+  await withServer({ setup: setup }, async function (ctx) {
+    var h = { 'X-PosterLight': '1' };
+    assert.strictEqual((await post(ctx, '/api/setup/manual', '{nope', h)).status, 400);
+    assert.strictEqual((await post(ctx, '/api/setup/manual', JSON.stringify({ a: new Array(20000).join('x') }), h)).status, 413);
+    assert.strictEqual((await post(ctx, '/api/setup/manual', '{}', { 'X-PosterLight': '1', 'Content-Type': 'text/plain' })).status, 415);
+    assert.strictEqual(setup.seen.filter(function (s) { return s.step; }).length, 0);
+  });
+});
+
+test('POST anywhere else, or with no setup module, is refused', async function () {
+  await withServer({ setup: fakeSetup() }, async function (ctx) {
+    assert.strictEqual((await post(ctx, '/api/status', {}, { 'X-PosterLight': '1' })).status, 405);
+  });
+  await withServer(null, async function (ctx) {
+    assert.strictEqual((await post(ctx, '/api/setup/status', {}, { 'X-PosterLight': '1' })).status, 405);
+  });
+});
+
+test('/setup serves the setup page', async function () {
+  await withServer(null, async function (ctx) {
+    var res = await get(ctx, '/setup');
+    assert.strictEqual(res.status, 200);
+    assert.match(res.headers['content-type'], /text\/html/);
+    assert.match(res.body.toString(), /Sign in with Plex/);
+  });
+});

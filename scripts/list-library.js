@@ -56,7 +56,7 @@ function main() {
   var parser = require('../lib/plex-parser');
   var config;
   try {
-    config = loadConfig(path.join(ROOT, 'config.json'), process.env);
+    config = loadConfig(process.env.POSTERLIGHT_CONFIG || path.join(ROOT, 'config.json'), process.env);
   } catch (e) {
     console.error(e.message);
     process.exit(1);

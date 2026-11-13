@@ -13,7 +13,8 @@
   function computeView(status, ctx) {
     var awake = ctx.nowMs - ctx.lastTapMs < TAP_WAKE_MS;
     var screen;
-    if (!ctx.hasPlayer) screen = 'setup';
+    if (status && status.state === 'setup') screen = 'unconfigured';   // the helper has no Plex settings yet
+    else if (!ctx.hasPlayer) screen = 'setup';
     else if (!status || status.state === 'idle' || !status.media) screen = 'idle';
     else if (status.state === 'intermission') screen = 'intermission';
     else screen = 'now';
@@ -21,7 +22,7 @@
     var isNow = screen === 'now';
     var isMusic = isNow && status.media.type === 'track';
     var fact = isNow && !isMusic && hasFact(status);
-    var full = awake || screen === 'setup' || (screen !== 'idle' && status.brightness === 'full');
+    var full = awake || screen === 'setup' || screen === 'unconfigured' || (screen !== 'idle' && status.brightness === 'full');
 
     // 'soft' is the in-between level: a fact at dim level, or the intermission sign.
     var overlay = full ? 'full' : (fact || screen === 'intermission' ? 'soft' : 'dim');
