@@ -323,7 +323,7 @@ The logo is defined once in `build-icons.js` as a list of shapes on a 512 grid: 
   - `computeLayout(w, h, posterShape) -> { orientation, posterW, posterH, castCount, baseFont }`.
     - `orientation` `'landscape'` when `w > h`, else `'portrait'`.
     - Poster ratio is 2:3 (`portrait`) or 1:1 (`square`). Portrait: the poster fits inside `0.86 w` by `0.52 h`. Landscape: inside `0.42 w` by `0.74 h`. Width and height are whole pixels and the ratio never changes.
-    - `castCount`: free card width divided by one headshot cell (`96` px when `min(w, h) >= 600`, else `72` px), minimum 3, maximum 8.
+    - `castCount`: free card width divided by one headshot cell (`120` px when `min(w, h) >= 600`, else `84` px), minimum 3, maximum 8.
     - `baseFont = clamp(min(w, h) / 40, 14, 26)`.
   - `pickPlayer(search, stored) -> String | null` — `?player=` wins over the stored value; empty → `null`.
   - `imageSize(cssPx, dpr) -> Number` — `Math.ceil(cssPx * Math.min(dpr || 1, 2) / 100) * 100`.

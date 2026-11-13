@@ -162,3 +162,10 @@ test('players lists everyone seen, with an active flag', function () {
   s.tracker.update([]);
   assert.strictEqual(s.tracker.players()[0].active, false);
 });
+
+test('a device may follow a player by its name', function () {
+  var s = setup();
+  s.tracker.update([session()]);
+  assert.strictEqual(s.tracker.view('living room').state, 'playing');
+  assert.strictEqual(s.tracker.view('Living Room').session.playerId, 'abc');
+});

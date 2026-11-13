@@ -1,1 +1,110 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>PosterLight</title></head><body>PosterLight</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PosterLight</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="Now showing at home.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PosterLight">
+<meta name="application-name" content="PosterLight">
+<meta name="theme-color" content="#14110F">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/posterlight.css">
+</head>
+<body>
+<div id="app" class="app is-portrait">
+  <div id="fader" class="fader">
+    <div id="stage" class="stage">
+
+      <!-- First run: choose which Plex player this screen follows -->
+      <section id="screen-setup" class="screen screen-setup">
+        <div class="setup-inner scrollable">
+          <img class="setup-logo" src="icons/logo.svg" alt="">
+          <h1 class="setup-name">PosterLight</h1>
+          <p class="setup-tagline">Now showing at home.</p>
+          <p class="setup-question">Which Plex player should this screen follow?</p>
+          <div id="player-list" class="player-list"></div>
+          <p id="setup-hint" class="setup-hint">Start something playing in Plex. The player appears here.</p>
+        </div>
+      </section>
+
+      <!-- Nothing playing -->
+      <section id="screen-idle" class="screen screen-idle">
+        <div class="sign sign-idle">
+          <div class="bulbs" data-bulbs="dim"></div>
+          <div class="sign-text">No Feature Playing</div>
+          <div class="bulbs" data-bulbs="dim"></div>
+        </div>
+        <p class="idle-brand">PosterLight</p>
+      </section>
+
+      <!-- Now showing -->
+      <section id="screen-now" class="screen screen-now">
+        <div class="marquee">
+          <div class="bulbs" data-bulbs="chase"></div>
+          <div class="marquee-text">Now Showing</div>
+          <div class="bulbs" data-bulbs="chase"></div>
+        </div>
+        <div class="poster-area">
+          <div class="poster-glow" id="poster-glow"></div>
+          <div class="frame" id="frame">
+            <div class="frame-inner" id="frame-inner">
+              <div class="poster-fallback" id="poster-fallback"></div>
+              <img id="poster" class="poster" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="titles">
+          <div class="titles-inner">
+            <h1 id="title" class="title"></h1>
+            <p id="subtitle" class="subtitle"></p>
+            <p class="meta">
+              <span id="rating" class="badge"></span><span id="runtime" class="meta-item"></span><span id="year" class="meta-item"></span>
+            </p>
+          </div>
+        </div>
+        <div id="card" class="card">
+          <div id="card-fact" class="card-layer card-fact">
+            <p id="fact-label" class="fact-label"></p>
+            <p id="fact-text" class="fact-text"></p>
+          </div>
+          <div id="card-cast" class="card-layer card-cast"></div>
+        </div>
+      </section>
+
+      <!-- Paused for more than 10 seconds -->
+      <section id="screen-intermission" class="screen screen-intermission">
+        <div class="sign sign-intermission">
+          <div class="bulbs" data-bulbs="chase"></div>
+          <div class="sign-stars">&#9733; &#9733; &#9733;</div>
+          <div class="sign-text">Intermission</div>
+          <div class="sign-sub">The feature will resume shortly</div>
+          <div class="bulbs" data-bulbs="chase"></div>
+        </div>
+        <p id="intermission-title" class="intermission-title"></p>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- "Dimming" is this dark layer. The web cannot change the real screen brightness. -->
+  <div id="dimmer" class="dimmer"></div>
+
+  <button id="gear" class="gear" type="button" aria-label="Choose a different player">Change player</button>
+  <div id="offline" class="offline" aria-hidden="true"></div>
+</div>
+<script src="js/logic.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
