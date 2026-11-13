@@ -74,3 +74,11 @@ test('loadPort works even when the rest of the config is missing', function () {
   assert.strictEqual(config.loadPort(tmpFile({ port: 9002 }), {}), 9002);
   assert.strictEqual(config.loadPort(tmpFile('{nope'), {}), 8686);
 });
+
+test('saveConfig makes an existing file private to its owner', { skip: process.platform === 'win32' }, function () {
+  var config = require('../lib/config');
+  var file = tmpFile({ plexUrl: 'http://old:32400', plexToken: 'old' });
+  fs.chmodSync(file, 0o644);
+  config.saveConfig(file, { plexUrl: 'http://new:32400', plexToken: 'new' });
+  assert.strictEqual(fs.statSync(file).mode & 0o777, 0o600);
+});

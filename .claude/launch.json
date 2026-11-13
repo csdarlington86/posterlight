@@ -2,10 +2,16 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "posterlight",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "port": 8686
+    },
+    {
       "name": "posterlight-demo",
       "runtimeExecutable": "env",
-      "runtimeArgs": ["PLEX_URL=http://127.0.0.1:9", "PLEX_TOKEN=demo-preview-only", "PORT=8686", "node", "server.js"],
-      "port": 8686
+      "runtimeArgs": ["PLEX_URL=http://127.0.0.1:9", "PLEX_TOKEN=demo-preview-only", "PORT=8687", "node", "server.js"],
+      "port": 8687
     }
   ]
 }
