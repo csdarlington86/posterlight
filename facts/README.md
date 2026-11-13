@@ -31,6 +31,23 @@ npm run library
 
 Shows do not need `year`.
 
+### Match in every language with `ids`
+
+A title's name in Plex depends on the owner's language. Add the IMDb id and the file
+matches every library:
+
+```json
+{
+  "title": "Alien",
+  "year": 1979,
+  "ids": ["imdb://tt0078748"],
+  "facts": ["First fact."]
+}
+```
+
+You find the id in the title's IMDb address: `imdb.com/title/tt0078748`.
+`tmdb://348` and `tvdb://81189` style ids work too. For a show, use the show's id, not an episode's.
+
 ## Rules for facts
 
 1. Write only facts that are real and that you can check.

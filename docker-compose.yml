@@ -1,0 +1,17 @@
+# Start with:  docker compose up -d
+# Then read the setup code with:  docker compose logs posterlight
+# and open http://<this computer's address>:8686/setup
+services:
+  posterlight:
+    build: .
+    container_name: posterlight
+    restart: unless-stopped
+    ports:
+      - "8686:8686"
+    volumes:
+      - posterlight-data:/data
+      # Optional: your own fact files, shared with the container.
+      # - ./facts:/app/facts
+
+volumes:
+  posterlight-data:

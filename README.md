@@ -7,112 +7,158 @@ title, cast, and facts for whatever is playing on your Plex server.
 
 It has two parts:
 
-- **The helper.** A small program that runs on an always-on computer. It asks Plex what is playing.
+- **The helper.** A small program that runs on a computer in your home that stays on. It asks Plex what is playing.
 - **The page.** Each tablet or phone opens one web page from the helper. You save it to the home screen.
 
-Your Plex token stays on the helper. It is never sent to a tablet or phone.
+Your Plex token stays on your own helper computer. It is never sent to a tablet or phone.
+
+PosterLight is free and open source (MIT license).
 
 ## Contents
 
-1. [What you need](#what-you-need)
-2. [Install the helper on Windows](#install-the-helper-on-windows)
-3. [Find your Plex token](#find-your-plex-token)
+1. [Quick start](#quick-start)
+2. [Install the helper](#install-the-helper)
+3. [Connect to Plex](#connect-to-plex)
 4. [Set up a device](#set-up-a-device)
 5. [Choose which player a screen follows](#choose-which-player-a-screen-follows)
 6. [Facts](#facts)
 7. [Check it on real devices](#check-it-on-real-devices)
 8. [What the screen does](#what-the-screen-does)
 9. [If something is wrong](#if-something-is-wrong)
-10. [Other computers: Mac, Linux, NAS](#other-computers-mac-linux-nas)
+10. [Privacy and safety](#privacy-and-safety)
 11. [For developers](#for-developers)
 
-## What you need
+## Quick start
 
-- A Plex Media Server.
-- A computer that stays on, on the same network. The Plex PC itself is a good choice.
-- [Node.js](https://nodejs.org) version 18 or later on that computer. PosterLight needs nothing else. There is no `npm install` step.
-- One or more tablets or phones on the same Wi-Fi.
+You need a Plex Media Server, a computer that stays on, and a spare tablet or phone, all on the same home network.
 
-## Install the helper on Windows
+1. Install [Node.js](https://nodejs.org) (the **LTS** version) on the computer that stays on.
+2. Download PosterLight and unzip it.
+3. Double-click `start-windows.bat` on Windows, or `start-mac.command` on a Mac.
+4. A browser page opens. Click **Sign in with Plex** and sign in.
+5. On your tablet, open the address the PosterLight window shows, for example `http://192.168.1.20:8686`.
+6. Add the page to the tablet's home screen. See [Set up a device](#set-up-a-device).
+
+PosterLight is free and has nothing else to install. There is no `npm install` step.
+
+## Install the helper
+
+The helper is the same on every system. It needs Node.js 18 or later.
+The Plex computer itself is a good place to run it.
+
+### Windows
 
 1. Install Node.js. Go to <https://nodejs.org>, download the **LTS** installer, and run it with the default options.
-2. Copy the `PosterLight App` folder to the PC. A short path is easiest, for example `C:\PosterLight`.
-3. Open the folder in File Explorer.
-4. Copy `config.example.json` and name the copy `config.json`.
-5. Open `config.json` in Notepad.
-6. Set `plexUrl` to your Plex address. If the helper runs on the Plex PC, use `http://127.0.0.1:32400`.
-7. Set `plexToken` to your Plex token. See [Find your Plex token](#find-your-plex-token).
-8. Save the file. It looks like this:
+2. Unzip PosterLight to a short path, for example `C:\PosterLight`.
+3. Double-click `start-windows.bat`.
+4. If Windows asks about the firewall, select **Private networks** and click **Allow access**.
 
-   ```json
-   {
-     "plexUrl": "http://127.0.0.1:32400",
-     "plexToken": "your-token-here",
-     "port": 8686
-   }
-   ```
+Keep the window open. The helper stops when you close it.
 
-9. Click the address bar of the File Explorer window, type `cmd`, and press Enter. A command window opens in the folder.
-10. Start the helper:
-
-    ```bash
-    npm start
-    ```
-
-11. Read the output. It shows the address for your devices, for example:
-
-    ```
-    PosterLight is running. Open http://192.168.1.20:8686 on your device.
-    Connected to Plex.
-    ```
-
-12. If Windows asks about the firewall, select **Private networks** and click **Allow access**.
-
-Keep the command window open. The helper stops when you close it.
-
-### If Windows did not ask about the firewall
-
-Devices cannot reach the helper until Windows allows port 8686.
+**If Windows did not ask about the firewall**, devices cannot reach the helper until you allow port 8686:
 
 1. Open the Start menu, type `cmd`, right-click **Command Prompt**, and click **Run as administrator**.
-2. Run this command. It allows other devices on your network to reach port 8686.
+2. Run this command. It lets other devices on your network reach port 8686.
 
    ```bash
    netsh advfirewall firewall add rule name="PosterLight" dir=in action=allow protocol=TCP localport=8686
    ```
 
-### Start the helper when you sign in to Windows
+**To start the helper when you sign in to Windows:**
 
 1. Open the Start menu, type `Task Scheduler`, and open it.
-2. Click **Create Basic Task**.
-3. Name it `PosterLight`. Click **Next**.
-4. Select **When I log on**. Click **Next**.
-5. Select **Start a program**. Click **Next**.
-6. In **Program/script**, type `node`.
-7. In **Add arguments**, type `server.js`.
-8. In **Start in**, type the folder path, for example `C:\PosterLight`.
-9. Click **Next**, then **Finish**.
+2. Click **Create Basic Task**. Name it `PosterLight`. Click **Next**.
+3. Select **When I log on**. Click **Next**.
+4. Select **Start a program**. Click **Next**.
+5. In **Program/script**, type `node`.
+6. In **Add arguments**, type `server.js`.
+7. In **Start in**, type the folder path, for example `C:\PosterLight`.
+8. Click **Next**, then **Finish**.
 
-### Give the PC a fixed address
+### Mac
 
-Your devices save the helper's address. If the PC's address changes, the devices lose the helper.
-Reserve the PC's IP address in your router (often called "DHCP reservation" or "static lease").
+1. Install Node.js from <https://nodejs.org> (the **LTS** version).
+2. Unzip PosterLight.
+3. Double-click `start-mac.command`. If macOS blocks it, right-click the file and click **Open**.
 
-## Find your Plex token
+To start it at login, add `start-mac.command` in **System Settings > General > Login Items**.
 
-1. Open Plex in a web browser and sign in.
-2. Open any movie or episode.
-3. Click the `⋯` button, then click **Get Info**.
-4. Click **View XML**. A new tab opens.
-5. Look at the address bar of the new tab. Near the end you see `X-Plex-Token=` followed by letters and numbers.
-6. Copy only the letters and numbers after `X-Plex-Token=`. That is your token.
-7. Paste it into `config.json` as `plexToken`.
+### Linux
 
-Keep the token private. Anyone who has it can use your Plex server.
+1. Install Node.js 18 or later with your package manager.
+2. Start the helper in the PosterLight folder:
+
+   ```bash
+   npm start
+   ```
+
+To run it as a service, create a `systemd` unit with `WorkingDirectory` set to the folder and `ExecStart=/usr/bin/node server.js`.
+
+### Docker and NAS (Synology, QNAP, Unraid)
+
+1. Build and start the container in the PosterLight folder:
+
+   ```bash
+   docker compose up -d
+   ```
+
+2. Read the setup code from the log:
+
+   ```bash
+   docker compose logs posterlight
+   ```
+
+3. Open `http://<address of the Docker computer>:8686/setup` and type the setup code.
+
+Settings are kept in the `posterlight-data` volume, so they survive an update.
+
+### Give the helper computer a fixed address
+
+Your devices save the helper's address. If that address changes, the devices lose the helper.
+Reserve the computer's IP address in your router (often called "DHCP reservation" or "static lease").
+
+## Connect to Plex
+
+The first time the helper starts, it is not connected to Plex. It shows a setup address in its window.
+
+### Sign in with Plex (the easy way)
+
+1. On the helper computer, open `http://localhost:8686/setup` in a web browser. The starter files open it for you.
+2. Click **Sign in with Plex**. A Plex page opens in a new tab.
+3. Sign in on the Plex page. PosterLight never sees your password.
+4. Go back to the setup tab. If you have more than one Plex server, click the one to follow.
+5. The page says **PosterLight is connected**.
+
+The helper starts at once. You do not need to restart it.
+
+### Set up from another device
+
+Use this when the helper computer has no screen, such as a NAS.
+
+1. Open `http://<helper address>:8686/setup` on a phone or laptop.
+2. Type the 6-digit setup code from the PosterLight window (or the Docker log).
+3. Continue with **Sign in with Plex**.
+
+The code is new each time the helper starts.
+
+### Enter the address and token by hand
+
+On the setup page, click **Enter the address and token by hand instead**. To find your token:
+
+1. Open Plex in a web browser and open any movie or episode.
+2. Click the `⋯` button, then **Get Info**, then **View XML**. A new tab opens.
+3. In the address bar of the new tab, copy the letters and numbers after `X-Plex-Token=`.
+
+You can also skip the setup page and write the settings yourself. Copy `config.example.json` to `config.json`
+and fill it in, or set the environment variables `PLEX_URL`, `PLEX_TOKEN`, and `PORT`.
+
+### Connect to a different server later
+
+Open `http://localhost:8686/setup` on the helper computer and click **Connect to a different server**.
 
 ## Set up a device
 
-Do these steps on each tablet or phone. Use the address the helper printed, for example `http://192.168.1.20:8686`.
+Do these steps on each tablet or phone. Use the address the PosterLight window shows, for example `http://192.168.1.20:8686`.
 
 Keep the device on its charger. A poster case is on for hours.
 
@@ -208,8 +254,8 @@ http://192.168.1.20:8686/?player=Living Room
 
 ## Facts
 
-Facts come from files in the `facts` folder: one file per movie and one per show.
-See [facts/README.md](facts/README.md) for the format.
+Facts come from a shared fact pack: the files in the `facts` folder, one per movie and one per show.
+Anyone can add a title or fix a fact. See [CONTRIBUTING.md](CONTRIBUTING.md) and [facts/README.md](facts/README.md).
 
 - A movie shows up to 15 facts, spread evenly across its runtime.
 - An episode shows 3 facts from its show's file. A fact is not reused until every fact in the file has been shown.
@@ -225,7 +271,7 @@ See [facts/README.md](facts/README.md) for the format.
    ```
 
 2. Read the output. It lists each title with no fact file and the file name to create.
-3. Create the files. You can ask Claude Code to write them from `data/library.json`.
+3. Create the files. Please share them with a pull request, so every PosterLight user gets them.
 4. Check the files:
 
    ```bash
@@ -269,8 +315,9 @@ Then check a real movie:
 ### What was tested, and what was not
 
 - Tested in a desktop browser at 768×1024, 800×1280, 390×844, and 360×800, in both orientations, for every demo screen.
-- The code that browsers run is checked by tests to use only features that iOS 12 Safari has.
-- **Not tested on real hardware:** iOS 12 Safari on an iPad Air 1, and Silk on a Fire tablet. Please run the checks above on those devices.
+- The code that the poster page runs is checked by tests to use only features that iOS 12 Safari has.
+- Setup was tested from start to finish against stand-ins for plex.tv and a Plex server.
+- **Not yet tested:** iOS 12 Safari on a real iPad Air 1, Silk on a real Fire tablet, sign-in against the real plex.tv, and the Docker build. Reports from real devices are very welcome.
 
 ## What the screen does
 
@@ -288,26 +335,30 @@ Every device that follows the same player shows the same fact. Devices ask the h
 
 | Problem | What to do |
 | --- | --- |
-| The helper prints `plexUrl is missing` or `plexToken is missing` | Create `config.json` from `config.example.json` and fill in both values. |
-| The helper prints `Plex is not reachable` | Check `plexUrl`. Open that address plus `/web` in a browser on the helper PC. |
-| The helper prints `Plex answered 401` | The token is wrong. Copy it again. |
-| The helper prints `port 8686 is already in use` | Change `port` in `config.json`, or close the other copy of the helper. |
-| A device cannot open the page | Check that the device is on the same Wi-Fi. Check the Windows firewall step. |
+| The screen says "PosterLight is not connected to Plex yet" | Finish [Connect to Plex](#connect-to-plex). |
+| The setup page says the helper could not reach the server | Check that Plex Media Server is running. Then use **Enter the address and token by hand**. |
+| The setup page asks for a code | You opened it from another device. The code is in the PosterLight window. |
+| "Too many wrong codes" | Restart the helper. It prints a new code. |
+| The helper prints `Plex is not reachable` | Plex is off, or its address changed. Run setup again. |
+| The helper prints `Plex answered 401` | The token is no longer valid. Run setup again. |
+| The helper prints `port 8686 is already in use` | Close the other copy of the helper. Or set `"port"` in `config.json`. |
+| A device cannot open the page | Check that the device is on the same Wi-Fi. Check the firewall step for your system. |
 | The player list is empty | Start something playing in Plex. Or tap **Any player**. |
 | The poster is missing but the title shows | Open `http://<helper address>/healthz`. `"plexOk": true` means the helper reaches Plex. |
-| No fact file is used for a title | Run `npm run library` and compare the file name it prints with your file's name. |
+| A title shows only simple facts | It has no fact file yet. See [Facts](#facts). |
 | The screen turns off | Follow the "Keep the screen on" steps for that device. |
 | The screen shows an old title after Plex went offline | The helper keeps the last screen until the title's runtime ends, then shows the idle sign. |
 
-## Other computers: Mac, Linux, NAS
+## Privacy and safety
 
-The helper is the same on every system: install Node.js 18 or later, create `config.json`, and run `npm start` in the folder.
+- Your Plex token stays in `config.json` on your own helper computer. It is never sent to a tablet or phone.
+- PosterLight has no server of its own. The project receives nothing from your installation.
+- The helper talks only to your Plex server, and to plex.tv while you sign in.
+- The helper has no password. Keep it on your home network. Do not forward its port on your router.
 
-- **Mac:** install Node.js from <https://nodejs.org>. Run `npm start` in Terminal. To start at login, add a small script to **System Settings > General > Login Items**.
-- **Linux:** install Node.js with your package manager. Run the helper as a `systemd` service with `WorkingDirectory` set to the folder and `ExecStart=/usr/bin/node server.js`.
-- **NAS:** use the Node.js package for your NAS (Synology, QNAP) or a `node:lts` Docker container with the folder mounted and port 8686 published.
+More detail is in [SECURITY.md](SECURITY.md).
 
-You can also set the values with environment variables instead of `config.json`: `PLEX_URL`, `PLEX_TOKEN`, and `PORT`.
+PosterLight is a community project. It is not affiliated with or endorsed by Plex.
 
 ## For developers
 
@@ -326,11 +377,14 @@ Runs all tests with Node's built-in test runner. There are no dependencies to in
 | `lib/fact-store.js` | Reads fact files and picks facts with no repeats. |
 | `lib/fallback-facts.js` | Facts from Plex data for titles with no file. |
 | `lib/plex-client.js` | The only code that holds the Plex token. |
+| `lib/plex-account.js` | "Sign in with Plex" against plex.tv. |
+| `lib/setup.js` | The setup steps, and the rules for who may use them. |
 | `lib/http-server.js` | The page, `/api/status`, `/api/players`, `/img/<id>`. |
 | `public/` | The page. Plain ES5 JavaScript with no build step, for iOS 12 Safari. |
 | `scripts/list-library.js` | `npm run library`. |
 | `scripts/build-icons.js` | `npm run icons`. Draws the logo and writes the SVG and PNG icons. |
-| `docs/superpowers/` | The spec and the implementation plan. |
+| `docs/superpowers/` | The spec and the implementation plans. |
+| `Dockerfile`, `docker-compose.yml` | The container image. |
 
 Images never come straight from Plex. A device asks the helper for `/img/<id>` at the size of its
 screen, and the helper asks Plex's own image resizer. An old tablet never loads a full-size poster.

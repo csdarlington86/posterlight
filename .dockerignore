@@ -1,0 +1,12 @@
+.git
+.github
+.claude
+.superpowers
+node_modules
+data
+config.json
+docs
+tests
+*.md
+start-windows.bat
+start-mac.command
