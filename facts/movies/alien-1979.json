@@ -1,6 +1,9 @@
 {
   "title": "Alien",
   "year": 1979,
+  "ids": [
+    "imdb://tt0078748"
+  ],
   "facts": [
     "Alien was Ridley Scott's second feature film, after The Duellists (1977).",
     "Dan O'Bannon wrote the screenplay, from a story by O'Bannon and Ronald Shusett.",

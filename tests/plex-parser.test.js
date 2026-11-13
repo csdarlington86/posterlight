@@ -107,3 +107,10 @@ test('parseCast reads the Role list of a metadata response', function () {
   assert.strictEqual(cast[1].name, 'Tom Skerritt');
   assert.deepStrictEqual(parser.parseCast(null), []);
 });
+
+test('parseGuids reads the external ids of a metadata response', function () {
+  var json = { MediaContainer: { Metadata: [{ guid: 'plex://movie/5d77', Guid: [{ id: 'imdb://tt0078748' }, { id: 'tmdb://348' }, {}, null] }] } };
+  assert.deepStrictEqual(parser.parseGuids(json), ['imdb://tt0078748', 'tmdb://348']);
+  assert.deepStrictEqual(parser.parseGuids({ MediaContainer: { Metadata: [{}] } }), []);
+  assert.deepStrictEqual(parser.parseGuids(null), []);
+});

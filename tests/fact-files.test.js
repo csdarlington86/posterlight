@@ -29,6 +29,12 @@ files('movies').concat(files('shows')).forEach(function (file) {
       assert.ok(!seen[fact.toLowerCase()], 'fact ' + i + ' is a duplicate');
       seen[fact.toLowerCase()] = true;
     });
+    if (json.ids !== undefined) {
+      assert.ok(Array.isArray(json.ids), 'ids must be a list');
+      json.ids.forEach(function (id) {
+        assert.ok(/^(imdb:\/\/tt\d+|tmdb:\/\/\d+|tvdb:\/\/\d+)$/.test(id), 'id "' + id + '" must look like imdb://tt0078748, tmdb://348 or tvdb://81189');
+      });
+    }
     var slug = slugify(json.title);
     var expected = file.kind === 'movies' && json.year ? slug + '-' + json.year + '.json' : slug + '.json';
     assert.strictEqual(file.name, expected, 'file name must match the title' + (file.kind === 'movies' ? ' and year' : ''));

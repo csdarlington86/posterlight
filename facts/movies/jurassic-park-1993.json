@@ -1,6 +1,9 @@
 {
   "title": "Jurassic Park",
   "year": 1993,
+  "ids": [
+    "imdb://tt0107290"
+  ],
   "facts": [
     "Steven Spielberg directed the film, from Michael Crichton's 1990 novel.",
     "Michael Crichton and David Koepp wrote the screenplay.",

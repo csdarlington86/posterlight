@@ -40,6 +40,7 @@ var factStore = createFactStore({
 var libraryIndex = buildLibraryIndex([]);
 
 // ---- small caches, keyed by the title that is playing ----
+var guidCache = {};      // metadata key -> external ids (imdb://..., tmdb://...)
 var castCache = {};      // metadata key -> cast list, or 'pending'
 var factCache = {};      // ratingKey -> { at, facts }
 var fallbackCache = {};  // ratingKey -> facts array
@@ -60,8 +61,11 @@ function fetchCast(session) {
   if (!key || castCache[key]) return;
   castCache[key] = 'pending';
   trim(castCache, 50);
+  trim(guidCache, 50);
   plex.getJson('/library/metadata/' + encodeURIComponent(key)).then(function (json) {
     castCache[key] = parser.parseCast(json);
+    guidCache[key] = parser.parseGuids(json);
+    delete factCache[session.ratingKey];   // look again, now that the ids are known
   }, function () {
     delete castCache[key];
   });
@@ -76,7 +80,7 @@ var deps = {
     var hit = factCache[key];
     var now = Date.now();
     if (!hit || now - hit.at > FACT_CACHE_MS) {
-      hit = factCache[key] = { at: now, facts: factStore.factsFor(session) };
+      hit = factCache[key] = { at: now, facts: factStore.factsFor(session, guidCache[castKey(session)] || []) };
       trim(factCache, 50);
     }
     return hit.facts;

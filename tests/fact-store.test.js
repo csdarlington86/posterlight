@@ -121,3 +121,32 @@ test('a movie with no year matches a file with no year in its name', function ()
   write(s, 'movies/alien.json', { title: 'Alien', facts: numbered(3) });
   assert.strictEqual(s.store.factsFor({ type: 'movie', ratingKey: '1', title: 'Alien', year: null }).length, 3);
 });
+
+test('a file matches by id even when the title in Plex is different', function () {
+  var s = setup();
+  write(s, 'movies/alien-1979.json', { title: 'Alien', year: 1979, ids: ['imdb://tt0078748', 'tmdb://348'], facts: numbered(4) });
+  var german = { type: 'movie', ratingKey: '7', title: 'Alien - Das unheimliche Wesen aus einer fremden Welt', year: 1979 };
+  assert.strictEqual(s.store.factsFor(german), null, 'no ids, no match');
+  assert.strictEqual(s.store.factsFor(german, ['plex://movie/abc', 'tmdb://348']).length, 4);
+  assert.strictEqual(s.store.factsFor(german, ['IMDB://TT0078748']).length, 4, 'ids compare without case');
+});
+
+test('ids that match nothing fall back to the file name', function () {
+  var s = setup();
+  write(s, 'movies/alien-1979.json', { title: 'Alien', year: 1979, facts: numbered(4) });
+  assert.strictEqual(s.store.factsFor(movie, ['imdb://tt9999999']).length, 4);
+});
+
+test('an episode matches its show file by the show ids', function () {
+  var s = setup();
+  write(s, 'shows/breaking-bad.json', { title: 'Breaking Bad', ids: ['imdb://tt0903747'], facts: numbered(9) });
+  var ep = { type: 'episode', ratingKey: 'E1', title: 'Pilot', showTitle: 'Breaking Bad: Edición especial' };
+  assert.strictEqual(s.store.factsFor(ep), null);
+  assert.strictEqual(s.store.factsFor(ep, ['imdb://tt0903747']).length, 3);
+});
+
+test('a movie id never matches a show file', function () {
+  var s = setup();
+  write(s, 'shows/fargo.json', { title: 'Fargo', ids: ['imdb://tt2802850'], facts: numbered(9) });
+  assert.strictEqual(s.store.factsFor({ type: 'movie', ratingKey: '3', title: 'Something Else', year: 1996 }, ['imdb://tt2802850']), null);
+});
