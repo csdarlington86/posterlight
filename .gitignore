@@ -1,5 +1,19 @@
+# Your own settings and secrets. Never commit these.
 config.json
+.env
+.env.*
+!.env.example
+
+# Runtime state written by the helper (player list, fact history, library list)
 data/
+
+# Caches
+cache/
+.cache/
+poster-cache/
+
+# Tools
 node_modules/
+npm-debug.log*
 .DS_Store
 .superpowers/

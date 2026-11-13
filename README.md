@@ -5,6 +5,10 @@
 PosterLight turns a spare tablet or phone into a theater poster case. It shows the poster,
 title, cast, and facts for whatever is playing on your Plex server.
 
+![PosterLight on a tablet in landscape: a lit NOW SHOWING marquee, a framed poster, the title, and a cast strip](docs/screenshot.jpg)
+
+*The demo screen. The poster, title, and people in it are made up.*
+
 It has two parts:
 
 - **The helper.** A small program that runs on a computer in your home that stays on. It asks Plex what is playing.
@@ -16,6 +20,7 @@ PosterLight is free and open source (MIT license).
 
 ## Contents
 
+1. [What you need](#what-you-need)
 1. [Quick start](#quick-start)
 2. [Install the helper](#install-the-helper)
 3. [Connect to Plex](#connect-to-plex)
@@ -28,9 +33,16 @@ PosterLight is free and open source (MIT license).
 10. [Privacy and safety](#privacy-and-safety)
 11. [For developers](#for-developers)
 
-## Quick start
+## What you need
 
-You need a Plex Media Server, a computer that stays on, and a spare tablet or phone, all on the same home network.
+- A **Plex Media Server** that you can sign in to.
+- A **computer that stays on**, on the same home network: Windows, Mac, Linux, or a NAS. The Plex computer itself is a good choice.
+- **Node.js 18 or later** on that computer. It is free, from <https://nodejs.org>.
+- A **spare tablet or phone** on the same Wi-Fi. An old iPad works: iOS 12 or later.
+
+You do not need a paid service, an account with PosterLight, or any programming.
+
+## Quick start
 
 1. Install [Node.js](https://nodejs.org) (the **LTS** version) on the computer that stays on.
 2. Download PosterLight and unzip it.
@@ -150,7 +162,7 @@ On the setup page, click **Enter the address and token by hand instead**. To fin
 3. In the address bar of the new tab, copy the letters and numbers after `X-Plex-Token=`.
 
 You can also skip the setup page and write the settings yourself. Copy `config.example.json` to `config.json`
-and fill it in, or set the environment variables `PLEX_URL`, `PLEX_TOKEN`, and `PORT`.
+and fill it in. Or use environment variables: `.env.example` lists them and shows how to start with them.
 
 ### Connect to a different server later
 
@@ -358,7 +370,11 @@ Every device that follows the same player shows the same fact. Devices ask the h
 
 More detail is in [SECURITY.md](SECURITY.md).
 
-PosterLight is a community project. It is not affiliated with or endorsed by Plex.
+PosterLight is a community project. It is not affiliated with, endorsed by, or sponsored by Plex, Inc.
+"Plex" is a trademark of Plex, Inc.
+
+PosterLight does not use the TMDB, IMDb, or TVDB services. Posters and cast photos come only from your own
+Plex server. The repository ships no real poster images: the demo art is made up.
 
 ## For developers
 
