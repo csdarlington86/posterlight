@@ -1,0 +1,5 @@
+{ "MediaContainer": { "size": 2, "Metadata": [
+  { "type": "movie", "ratingKey": "101", "title": "Alien", "year": 1979, "studio": "20th Century Fox",
+    "Director": [ { "tag": "Ridley Scott" } ], "Role": [ { "tag": "Sigourney Weaver" }, { "tag": "Tom Skerritt" } ] },
+  { "type": "show", "ratingKey": "500", "title": "Severance", "year": 2022, "studio": "Apple TV+" }
+] } }

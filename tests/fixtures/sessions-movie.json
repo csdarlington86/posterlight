@@ -1,0 +1,13 @@
+{ "MediaContainer": { "size": 1, "Metadata": [ {
+  "type": "movie", "ratingKey": "101", "title": "Alien", "year": 1979, "contentRating": "R",
+  "duration": 7020000, "viewOffset": 60000, "thumb": "/library/metadata/101/thumb/1",
+  "art": "/library/metadata/101/art/1", "studio": "20th Century Fox",
+  "Director": [ { "tag": "Ridley Scott" } ],
+  "Role": [
+    { "tag": "Sigourney Weaver", "role": "Ripley", "thumb": "https://metadata-static.plex.tv/people/weaver.jpg" },
+    { "tag": "Tom Skerritt", "role": "Dallas", "thumb": "https://metadata-static.plex.tv/people/skerritt.jpg" },
+    { "tag": "John Hurt", "role": "Kane" }
+  ],
+  "Player": { "machineIdentifier": "abc", "title": "Living Room", "state": "playing", "product": "Plex for Apple TV" },
+  "User": { "title": "owner" }
+} ] } }

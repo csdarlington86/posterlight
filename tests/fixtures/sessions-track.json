@@ -1,0 +1,6 @@
+{ "MediaContainer": { "size": 1, "Metadata": [ {
+  "type": "track", "ratingKey": "900", "title": "So What", "duration": 562000, "viewOffset": 1000,
+  "grandparentTitle": "Miles Davis", "parentTitle": "Kind of Blue", "parentYear": 1959,
+  "thumb": "/library/metadata/900/thumb/1", "parentThumb": "/library/metadata/890/thumb/1",
+  "Player": { "machineIdentifier": "ghi", "title": "Kitchen Speaker", "state": "playing" }
+} ] } }

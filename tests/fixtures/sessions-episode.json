@@ -1,0 +1,11 @@
+{ "MediaContainer": { "size": 1, "Metadata": [ {
+  "type": "episode", "ratingKey": "555", "title": "The You You Are", "year": 2022, "contentRating": "TV-MA",
+  "duration": 3000000, "viewOffset": 120000,
+  "grandparentTitle": "Severance", "grandparentRatingKey": "500", "parentRatingKey": "510",
+  "parentIndex": 1, "index": 4,
+  "thumb": "/library/metadata/555/thumb/1", "parentThumb": "/library/metadata/510/thumb/1",
+  "grandparentThumb": "/library/metadata/500/thumb/1",
+  "Director": [ { "tag": "Aoife McArdle" } ],
+  "Role": [ { "tag": "Adam Scott", "role": "Mark Scout", "thumb": "https://metadata-static.plex.tv/people/scott.jpg" } ],
+  "Player": { "machineIdentifier": "def", "title": "Bedroom TV", "state": "paused" }
+} ] } }

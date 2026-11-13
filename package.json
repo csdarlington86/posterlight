@@ -1,0 +1,14 @@
+{
+  "name": "posterlight",
+  "version": "1.0.0",
+  "description": "Now showing at home. A theater poster case for your Plex server.",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/",
+    "library": "node scripts/list-library.js",
+    "icons": "node scripts/build-icons.js"
+  }
+}
