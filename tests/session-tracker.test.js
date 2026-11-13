@@ -169,3 +169,25 @@ test('a device may follow a player by its name', function () {
   assert.strictEqual(s.tracker.view('living room').state, 'playing');
   assert.strictEqual(s.tracker.view('Living Room').session.playerId, 'abc');
 });
+
+test('a small difference between Plex and the estimate does not move the offset backwards', function () {
+  var s = setup();
+  s.tracker.update([session({ viewOffsetMs: 60000 })]);
+  s.clock.t += 10500;
+  // Plex reports 70000 while the estimate is 70500: keep the estimate, so a fact does not flicker.
+  s.tracker.update([session({ viewOffsetMs: 70000 })]);
+  assert.strictEqual(s.tracker.view('abc').offsetMs, 70500);
+  s.clock.t += 1000;
+  assert.strictEqual(s.tracker.view('abc').offsetMs, 71500);
+});
+
+test('a seek of 5 seconds or more replaces the estimate', function () {
+  var s = setup();
+  s.tracker.update([session({ viewOffsetMs: 60000 })]);
+  s.clock.t += 2000;
+  s.tracker.update([session({ viewOffsetMs: 67000 })]);
+  assert.strictEqual(s.tracker.view('abc').offsetMs, 67000);
+  s.clock.t += 2000;
+  s.tracker.update([session({ viewOffsetMs: 30000 })]);
+  assert.strictEqual(s.tracker.view('abc').offsetMs, 30000);
+});

@@ -20,6 +20,7 @@ var DATA_DIR = path.join(ROOT, 'data');
 var PLAYERS_FILE = path.join(DATA_DIR, 'players.json');
 var POLL_MS = 2000;
 var LIBRARY_REFRESH_MS = 6 * 60 * 60 * 1000;
+var FACT_CACHE_MS = 60000;
 
 var config;
 try {
@@ -40,7 +41,7 @@ var libraryIndex = buildLibraryIndex([]);
 
 // ---- small caches, keyed by the title that is playing ----
 var castCache = {};      // metadata key -> cast list, or 'pending'
-var factCache = {};      // ratingKey -> facts array (or null)
+var factCache = {};      // ratingKey -> { at, facts }
 var fallbackCache = {};  // ratingKey -> facts array
 
 function trim(cache, max) {
@@ -69,12 +70,16 @@ function fetchCast(session) {
 var deps = {
   images: images,
   factsFor: function (session) {
+    // Read the fact file at most once a minute per title, so a new or edited file is picked up
+    // without a restart and the disk is not read on every device request.
     var key = session.ratingKey;
-    if (!Object.prototype.hasOwnProperty.call(factCache, key)) {
-      factCache[key] = factStore.factsFor(session);
+    var hit = factCache[key];
+    var now = Date.now();
+    if (!hit || now - hit.at > FACT_CACHE_MS) {
+      hit = factCache[key] = { at: now, facts: factStore.factsFor(session) };
       trim(factCache, 50);
     }
-    return factCache[key];
+    return hit.facts;
   },
   fallbackFor: function (session) {
     var key = session.ratingKey;
