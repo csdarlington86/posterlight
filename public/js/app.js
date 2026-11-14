@@ -24,6 +24,7 @@
   };
 
   var demo = L.queryParam(window.location.search, 'demo');
+  var startedAt = new Date().getTime();
 
   var state = {
     player: null,          // the Plex player this device follows, or 'any'
@@ -175,6 +176,7 @@
   // ---------- media: poster, titles, cast ----------
 
   function imageUrl(id, cssW, cssH) {
+    if (window.PosterLightDemo) return 'demo/' + encodeURIComponent(id) + '.svg';   // static demo art
     var dpr = window.devicePixelRatio || 1;
     return 'img/' + encodeURIComponent(id) + '?w=' + L.imageSize(cssW, dpr) + '&h=' + L.imageSize(cssH, dpr);
   }
@@ -313,6 +315,15 @@
   // ---------- talking to the helper ----------
 
   function poll() {
+    // The public website's demo carries its own data and has no helper to ask.
+    if (window.PosterLightDemo) {
+      state.failures = 0;
+      state.answered = true;
+      state.status = window.PosterLightDemo.status(new Date().getTime() - startedAt);
+      window.setTimeout(poll, POLL_MS);
+      try { render(); } catch (e) { /* the next poll draws again */ }
+      return;
+    }
     // With no player chosen yet we still ask, to learn whether the helper itself is set up.
     var url = 'api/status?player=' + encodeURIComponent(state.player || 'any');
     if (demo) url += '&demo=' + encodeURIComponent(demo);
@@ -449,7 +460,7 @@
   // ---------- start ----------
 
   state.player = L.pickPlayer(window.location.search, readStored());
-  if (!state.player && demo) state.player = 'any';   // demo pages skip the setup screen
+  if (!state.player && (demo || window.PosterLightDemo)) state.player = 'any';   // demo pages skip the setup screen
 
   updateLayout();
   requestWakeLock();

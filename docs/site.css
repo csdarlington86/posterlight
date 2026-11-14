@@ -1,0 +1,30 @@
+@font-face { font-family: 'Limelight'; src: url('demo/fonts/limelight-400.woff2') format('woff2'), url('demo/fonts/limelight-400.woff') format('woff'); font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('demo/fonts/inter-400.woff2') format('woff2'), url('demo/fonts/inter-400.woff') format('woff'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Inter'; src: url('demo/fonts/inter-600.woff2') format('woff2'), url('demo/fonts/inter-600.woff') format('woff'); font-weight: 600; font-display: swap; }
+* { box-sizing: border-box; }
+html { background: #14110F; }
+body { margin: 0; color: #F6EFE2; font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 18px; line-height: 1.55; }
+a { color: #FFC857; }
+a:focus-visible { outline: 2px solid #FFE9A8; outline-offset: 3px; }
+.hero { text-align: center; padding: 3.5em 1.2em 2em; background: radial-gradient(ellipse at 50% 0%, rgba(255, 200, 87, 0.14) 0%, rgba(255, 200, 87, 0) 60%); }
+.logo { width: 7em; height: 7em; }
+h1 { margin: 0.15em 0 0; font-family: 'Limelight', Georgia, serif; font-weight: 400; font-size: 3.2em; line-height: 1.1; color: #FFC857; text-shadow: 0 0 0.4em rgba(255, 200, 87, 0.35); }
+.tagline { margin: 0.2em 0 1.2em; font-size: 1.15em; color: #FFE9A8; }
+.lead { max-width: 34em; margin: 0 auto 1.6em; font-size: 1.1em; }
+.actions { margin: 0 0 0.8em; }
+.button { display: inline-block; margin: 0.3em; padding: 0.8em 1.5em; font-weight: 600; text-decoration: none; color: #F6EFE2; background: #2A211A; border: 1px solid #7A5C1E; border-radius: 0.6em; }
+.button.primary { color: #14110F; background: #FFC857; border-color: #FFC857; }
+.button:hover { border-color: #FFE9A8; }
+.small { margin: 0; font-size: 0.85em; color: #C9BFAE; }
+main { max-width: 46em; margin: 0 auto; padding: 0 1.2em 2em; }
+.shot { display: block; border: 1px solid #7A5C1E; border-radius: 0.8em; overflow: hidden; box-shadow: 0 0 2.5em rgba(255, 200, 87, 0.16); }
+.shot img { display: block; width: 100%; height: auto; }
+.caption { margin: 0.7em 0 0; text-align: center; font-size: 0.85em; color: #C9BFAE; }
+section { margin-top: 3em; }
+h2 { margin: 0 0 0.6em; font-family: 'Limelight', Georgia, serif; font-weight: 400; font-size: 1.7em; color: #FFC857; }
+ol, ul { padding-left: 1.3em; }
+li { margin-bottom: 0.7em; }
+code { padding: 0.1em 0.35em; font-size: 0.9em; background: #241D17; border: 1px solid #3A2E22; border-radius: 0.3em; }
+.note { padding: 1em 1.2em; background: #1D1814; border: 1px solid #7A5C1E; border-radius: 0.7em; }
+footer { max-width: 46em; margin: 0 auto; padding: 2em 1.2em 3em; border-top: 1px solid #3A2E22; font-size: 0.8em; color: #9C8F7C; }
+@media (max-width: 560px) { body { font-size: 16px; } h1 { font-size: 2.5em; } }

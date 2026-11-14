@@ -9,6 +9,8 @@ title, cast, and facts for whatever is playing on your Plex server.
 
 *The demo screen. The poster, title, and people in it are made up.*
 
+**[Try the live demo](https://csdarlington86.github.io/posterlight/demo/)** in your browser, or visit the [PosterLight website](https://csdarlington86.github.io/posterlight/).
+
 It has two parts:
 
 - **The helper.** A small program that runs on a computer in your home that stays on. It asks Plex what is playing.
@@ -399,6 +401,7 @@ Runs all tests with Node's built-in test runner. There are no dependencies to in
 | `public/` | The page. Plain ES5 JavaScript with no build step, for iOS 12 Safari. |
 | `scripts/list-library.js` | `npm run library`. |
 | `scripts/build-icons.js` | `npm run icons`. Draws the logo and writes the SVG and PNG icons. |
+| `site/`, `scripts/build-site.js` | The public website. `npm run site` builds it into `docs/`, which GitHub Pages serves. Run it after you change the page. |
 | `docs/superpowers/` | The spec and the implementation plans. |
 | `Dockerfile`, `docker-compose.yml` | The container image. |
 

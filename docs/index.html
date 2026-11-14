@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PosterLight - a theater poster case for your Plex</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="PosterLight turns a spare tablet or phone into a theater poster case that shows what is playing on your Plex server. Free and open source.">
+<meta name="theme-color" content="#14110F">
+<meta property="og:title" content="PosterLight">
+<meta property="og:description" content="Now showing at home. A theater poster case for your Plex, on any spare tablet or phone.">
+<meta property="og:image" content="screenshot.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="demo/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="demo/icons/icon-180.png">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="hero">
+  <img class="logo" src="demo/icons/logo.svg" alt="" width="112" height="112">
+  <h1>PosterLight</h1>
+  <p class="tagline">Now showing at home.</p>
+  <p class="lead">Turn a spare tablet or phone into a theater poster case. It shows the poster, title, cast, and facts for whatever is playing on your Plex server.</p>
+  <p class="actions">
+    <a class="button primary" href="demo/">See the live demo</a>
+    <a class="button" href="https://github.com/csdarlington86/posterlight/archive/refs/heads/main.zip">Download</a>
+  </p>
+  <p class="small">Free and open source. No account, no subscription.</p>
+</header>
+
+<main>
+  <a class="shot" href="demo/"><img src="screenshot.jpg" alt="The PosterLight screen: a lit NOW SHOWING marquee, a framed poster, the title, and a cast strip" width="800" height="600"></a>
+  <p class="caption">The demo runs right in your browser. Its titles and people are made up.</p>
+
+  <section>
+    <h2>Set it up in a few minutes</h2>
+    <ol class="steps">
+      <li><strong>Install Node.js.</strong> It is free. Get the LTS version from <a href="https://nodejs.org">nodejs.org</a> for the computer that runs Plex, or any computer that stays on.</li>
+      <li><strong>Download PosterLight</strong> and unzip it. Double-click <code>start-windows.bat</code> on Windows or <code>start-mac.command</code> on a Mac.</li>
+      <li><strong>Sign in with Plex</strong> on the page that opens. PosterLight never sees your password.</li>
+      <li><strong>Open the address it shows</strong> on your tablet, and add it to the home screen.</li>
+    </ol>
+    <p><a href="https://github.com/csdarlington86/posterlight#readme">Read the full guide</a>, with steps for iPad, Android, Fire tablets, Linux, and Docker.</p>
+  </section>
+
+  <section>
+    <h2>What it does</h2>
+    <ul class="features">
+      <li><strong>A real marquee.</strong> Chasing bulbs, a lit poster frame, and an Intermission sign when you pause.</li>
+      <li><strong>Facts while you watch.</strong> Up to 15 per movie and 3 per episode, timed across the runtime.</li>
+      <li><strong>Old devices welcome.</strong> It runs on an iPad Air 1 with iOS 12, newer iPads and iPhones, Android, and Fire tablets.</li>
+      <li><strong>Easy on the screen.</strong> It dims after 3 minutes, wakes on a tap, and drifts slowly to prevent burn-in.</li>
+      <li><strong>Every screen in step.</strong> Several tablets can follow the same player and show the same fact.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What you need</h2>
+    <ul>
+      <li>A Plex Media Server that you own.</li>
+      <li>A computer that stays on, on the same home network: Windows, Mac, Linux, or a NAS.</li>
+      <li>A spare tablet or phone on the same Wi-Fi.</li>
+    </ul>
+    <p class="note"><strong>Why is there something to install?</strong> PosterLight runs in your home, next to your Plex. Your Plex token stays on your own computer and is never sent to this website or to anyone else. That is also why this site can show a demo, but not your own library.</p>
+  </section>
+
+  <section>
+    <h2>Help make it better</h2>
+    <p>The facts come from a shared pack that anyone can add to. <a href="https://github.com/csdarlington86/posterlight/blob/main/CONTRIBUTING.md">Add facts for a title</a>, or <a href="https://github.com/csdarlington86/posterlight/issues">report a problem</a>.</p>
+    <p><a class="button" href="https://github.com/csdarlington86/posterlight">View the project on GitHub</a></p>
+  </section>
+</main>
+
+<footer>
+  <p>PosterLight is a community project. It is not affiliated with, endorsed by, or sponsored by Plex, Inc. "Plex" is a trademark of Plex, Inc.</p>
+  <p>MIT license. Fonts: Limelight and Inter, SIL Open Font License.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="PosterLight">
+  <rect width="512" height="512" rx="96" fill="#14110F"/>
+  <rect x="152" y="100" width="208" height="312" rx="14" fill="#FFC857"/>
+  <rect x="206" y="176" width="34" height="164" fill="#14110F"/>
+  <rect x="206" y="176" width="106" height="100" rx="50" fill="#14110F"/>
+  <rect x="206" y="176" width="50" height="100" fill="#14110F"/>
+  <rect x="240" y="208" width="40" height="36" rx="18" fill="#FFC857"/>
+  <circle cx="118" cy="66" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="118" cy="66" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="187" cy="66" r="12.5" fill="#7A5C1E"/>
+  <circle cx="256" cy="66" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="256" cy="66" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="325" cy="66" r="12.5" fill="#7A5C1E"/>
+  <circle cx="394" cy="66" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="394" cy="66" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="394" cy="129.33" r="12.5" fill="#7A5C1E"/>
+  <circle cx="394" cy="192.67" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="394" cy="192.67" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="394" cy="256" r="12.5" fill="#7A5C1E"/>
+  <circle cx="394" cy="319.33" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="394" cy="319.33" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="394" cy="382.67" r="12.5" fill="#7A5C1E"/>
+  <circle cx="394" cy="446" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="394" cy="446" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="325" cy="446" r="12.5" fill="#7A5C1E"/>
+  <circle cx="256" cy="446" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="256" cy="446" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="187" cy="446" r="12.5" fill="#7A5C1E"/>
+  <circle cx="118" cy="446" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="118" cy="446" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="118" cy="382.67" r="12.5" fill="#7A5C1E"/>
+  <circle cx="118" cy="319.33" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="118" cy="319.33" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="118" cy="256" r="12.5" fill="#7A5C1E"/>
+  <circle cx="118" cy="192.67" r="21" fill="#FFE9A8" fill-opacity="0.22"/>
+  <circle class="bulb" cx="118" cy="192.67" r="12.5" fill="#FFE9A8"/>
+  <circle class="bulb" cx="118" cy="129.33" r="12.5" fill="#7A5C1E"/>
+</svg>
