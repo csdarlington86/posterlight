@@ -17,3 +17,6 @@ node_modules/
 npm-debug.log*
 .DS_Store
 .superpowers/
+
+# The built website. GitHub builds it on every push.
+_site/

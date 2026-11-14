@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Connect PosterLight to Plex</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#14110F">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="stylesheet" href="css/setup.css">
+</head>
+<body>
+<main class="wrap">
+  <img class="logo" src="icons/logo.svg" alt="">
+  <h1>PosterLight</h1>
+  <p class="tagline">Now showing at home.</p>
+
+  <section id="step-start" class="panel" style="display:none">
+    <h2>Connect this screen to Plex</h2>
+    <p id="start-text">Getting a code from Plex.</p>
+    <div id="code-box" style="display:none">
+      <p>1. On your phone or computer, open <strong>plex.tv/link</strong></p>
+      <p>2. Sign in, then type this code:</p>
+      <p class="address" id="link-code"></p>
+      <p class="note">This screen continues by itself when you are done.</p>
+    </div>
+    <p id="start-error" class="error" style="display:none"></p>
+    <p><button id="redirect-go" type="button">Sign in on this device instead</button></p>
+    <p class="note">You sign in on Plex's own page. PosterLight never sees your password.</p>
+  </section>
+
+  <section id="step-servers" class="panel" style="display:none">
+    <h2 id="servers-title">Choose your Plex server</h2>
+    <div id="server-list"></div>
+    <p id="server-error" class="error" style="display:none"></p>
+    <p id="server-help" class="note" style="display:none"></p>
+    <p><button id="start-over" type="button" class="link">Start again</button></p>
+  </section>
+
+  <section id="step-done" class="panel" style="display:none">
+    <h2>PosterLight is connected</h2>
+    <p id="done-text"></p>
+    <p><a class="button primary" href="./">Open the poster</a></p>
+    <p class="note">Add this page to the home screen for a full-screen poster. In Safari, tap Share, then Add to Home Screen.</p>
+    <p class="note"><button id="sign-out" type="button" class="link">Disconnect this screen from Plex</button></p>
+  </section>
+
+  <p class="foot">Your Plex sign-in is saved on this device only. It is sent to your own Plex server and to plex.tv, and nowhere else.
+    PosterLight is a community project. It is not affiliated with Plex.</p>
+</main>
+<script src="js/posterlight-web.js"></script>
+<script src="js/connect.js"></script>
+</body>
+</html>

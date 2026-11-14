@@ -384,6 +384,7 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   -webkit-appearance: none; appearance: none;
 }
 a.player-button { text-decoration: none; text-align: center; }
+.setup-link { color: #FFC857; }
 .player-button:active { background: #3A2A1A; }
 .player-button.is-any { border-color: #FFC857; color: #FFC857; }
 .player-button small { display: block; margin-top: 0.15em; font-weight: 400; font-size: 0.75em; color: #C9BFAE; }

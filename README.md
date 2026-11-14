@@ -9,7 +9,26 @@ title, cast, and facts for whatever is playing on your Plex server.
 
 *The demo screen. The poster, title, and people in it are made up.*
 
-**[Try the live demo](https://csdarlington86.github.io/posterlight/demo/)** in your browser, or visit the [PosterLight website](https://csdarlington86.github.io/posterlight/).
+## Two ways to use it
+
+**1. The web app: nothing to install.** Open **<https://csdarlington86.github.io/posterlight/app/>** on the tablet or phone.
+The screen shows a short code. Go to `plex.tv/link` on your phone or computer, sign in, and type the code. That is all.
+You can [see a demo first](https://csdarlington86.github.io/posterlight/demo/).
+
+**2. The helper: runs in your home.** A small program on a computer that stays on. Your tablets then need no sign-in,
+and it works when a router blocks Plex's secure home addresses. The rest of this guide covers the helper.
+
+| | Web app | Helper |
+| --- | --- | --- |
+| Install | Nothing | Node.js and this download |
+| Sign in to Plex | Once on each screen | Once, on the helper computer |
+| Where the Plex sign-in is kept | In the browser of each screen | On the helper computer only |
+| Needs Plex secure connections (the default) | Yes | No |
+| "Also in your library" facts | No | Yes |
+
+Both need the Plex account that owns the server, because Plex shows "what is playing" to the owner only.
+
+## The helper
 
 It has two parts:
 
@@ -401,12 +420,27 @@ Runs all tests with Node's built-in test runner. There are no dependencies to in
 | `public/` | The page. Plain ES5 JavaScript with no build step, for iOS 12 Safari. |
 | `scripts/list-library.js` | `npm run library`. |
 | `scripts/build-icons.js` | `npm run icons`. Draws the logo and writes the SVG and PNG icons. |
-| `site/`, `scripts/build-site.js` | The public website. `npm run site` builds it into `docs/`, which GitHub Pages serves. Run it after you change the page. |
+| `lib/web-engine.js`, `lib/web-connect.js` | The web app's engine and Plex sign-in. They run in the browser and reuse the helper's modules. |
+| `site/`, `scripts/build-site.js` | The public website: landing page, web app, and demo. |
+| `.github/workflows/pages.yml` | Tests, builds, and publishes the website on every push to `main`. |
 | `docs/superpowers/` | The spec and the implementation plans. |
 | `Dockerfile`, `docker-compose.yml` | The container image. |
 
 Images never come straight from Plex. A device asks the helper for `/img/<id>` at the size of its
 screen, and the helper asks Plex's own image resizer. An old tablet never loads a full-size poster.
+
+### Updating the live website
+
+The website publishes itself. Change a file, commit, and push to `main` (or edit a file on github.com and commit there).
+GitHub runs the tests, builds the site, and puts it live in about two minutes. If a test fails, the old version stays live.
+
+To build the site on your own computer and look at it first:
+
+```bash
+npm run site
+```
+
+That writes the `_site` folder. It is not committed.
 
 ### Fonts
 

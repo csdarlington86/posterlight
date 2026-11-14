@@ -20,10 +20,10 @@
   <p class="tagline">Now showing at home.</p>
   <p class="lead">Turn a spare tablet or phone into a theater poster case. It shows the poster, title, cast, and facts for whatever is playing on your Plex server.</p>
   <p class="actions">
-    <a class="button primary" href="demo/">See the live demo</a>
-    <a class="button" href="https://github.com/csdarlington86/posterlight/archive/refs/heads/main.zip">Download</a>
+    <a class="button primary" href="app/">Open PosterLight</a>
+    <a class="button" href="demo/">See a demo first</a>
   </p>
-  <p class="small">Free and open source. No account, no subscription.</p>
+  <p class="small">Free and open source. Nothing to install. No account with us, no subscription.</p>
 </header>
 
 <main>
@@ -31,14 +31,15 @@
   <p class="caption">The demo runs right in your browser. Its titles and people are made up.</p>
 
   <section>
-    <h2>Set it up in a few minutes</h2>
+    <h2>Set it up in about a minute</h2>
     <ol class="steps">
-      <li><strong>Install Node.js.</strong> It is free. Get the LTS version from <a href="https://nodejs.org">nodejs.org</a> for the computer that runs Plex, or any computer that stays on.</li>
-      <li><strong>Download PosterLight</strong> and unzip it. Double-click <code>start-windows.bat</code> on Windows or <code>start-mac.command</code> on a Mac.</li>
-      <li><strong>Sign in with Plex</strong> on the page that opens. PosterLight never sees your password.</li>
-      <li><strong>Open the address it shows</strong> on your tablet, and add it to the home screen.</li>
+      <li><strong>Open PosterLight</strong> on the tablet or phone you want to use: tap <a href="app/">Open PosterLight</a>.</li>
+      <li><strong>Connect it to Plex.</strong> The screen shows a short code. On your phone or computer, go to <strong>plex.tv/link</strong>, sign in, and type the code.</li>
+      <li><strong>Choose a player</strong> to follow, or choose "Any player".</li>
+      <li><strong>Add it to the home screen</strong> for a full-screen poster. In Safari, tap Share, then Add to Home Screen.</li>
+      <li><strong>Keep the screen on.</strong> On an iPad or iPhone: Settings, Display &amp; Brightness, Auto-Lock, Never.</li>
     </ol>
-    <p><a href="https://github.com/csdarlington86/posterlight#readme">Read the full guide</a>, with steps for iPad, Android, Fire tablets, Linux, and Docker.</p>
+    <p>Then play something in Plex.</p>
   </section>
 
   <section>
@@ -55,11 +56,17 @@
   <section>
     <h2>What you need</h2>
     <ul>
-      <li>A Plex Media Server that you own.</li>
-      <li>A computer that stays on, on the same home network: Windows, Mac, Linux, or a NAS.</li>
-      <li>A spare tablet or phone on the same Wi-Fi.</li>
+      <li>A Plex Media Server, and the Plex account that owns it. Plex shows "what is playing" to the owner only.</li>
+      <li>A tablet or phone. Each screen is connected to Plex once.</li>
+      <li>Plex set up the usual way: secure connections on, which is the default.</li>
     </ul>
-    <p class="note"><strong>Why is there something to install?</strong> PosterLight runs in your home, next to your Plex. Your Plex token stays on your own computer and is never sent to this website or to anyone else. That is also why this site can show a demo, but not your own library.</p>
+    <p class="note"><strong>Where does my Plex sign-in go?</strong> It is saved on your own device and sent only to your own Plex server and to plex.tv. This website has no server behind it and receives nothing: no sign-in, no titles, no viewing history. You sign in on Plex's own page, so PosterLight never sees your password.</p>
+  </section>
+
+  <section>
+    <h2>Prefer to run it at home?</h2>
+    <p>There is also a small helper program for a computer that stays on. With it, your tablets need no sign-in at all, and it works when a router blocks Plex's secure home addresses.</p>
+    <p><a class="button" href="https://github.com/csdarlington86/posterlight/archive/refs/heads/main.zip">Download the helper</a> <a class="button" href="https://github.com/csdarlington86/posterlight#readme">Read the guide</a></p>
   </section>
 
   <section>

@@ -24,7 +24,8 @@
   };
 
   var demo = L.queryParam(window.location.search, 'demo');
-  var startedAt = new Date().getTime();
+  // Set by the website builds (web app and demo). Null when a helper serves this page.
+  var local = window.PosterLightLocal || null;
 
   var state = {
     player: null,          // the Plex player this device follows, or 'any'
@@ -176,8 +177,8 @@
   // ---------- media: poster, titles, cast ----------
 
   function imageUrl(id, cssW, cssH) {
-    if (window.PosterLightDemo) return 'demo/' + encodeURIComponent(id) + '.svg';   // static demo art
     var dpr = window.devicePixelRatio || 1;
+    if (local) return local.imageUrl(id, L.imageSize(cssW, dpr), L.imageSize(cssH, dpr));
     return 'img/' + encodeURIComponent(id) + '?w=' + L.imageSize(cssW, dpr) + '&h=' + L.imageSize(cssH, dpr);
   }
 
@@ -315,13 +316,15 @@
   // ---------- talking to the helper ----------
 
   function poll() {
-    // The public website's demo carries its own data and has no helper to ask.
-    if (window.PosterLightDemo) {
+    // The website (web app and demo) brings its own data source and has no helper to ask.
+    if (local) {
       state.failures = 0;
       state.answered = true;
-      state.status = window.PosterLightDemo.status(new Date().getTime() - startedAt);
       window.setTimeout(poll, POLL_MS);
-      try { render(); } catch (e) { /* the next poll draws again */ }
+      try {
+        state.status = local.status(state.player || 'any');
+        render();
+      } catch (e) { /* the next poll draws again */ }
       return;
     }
     // With no player chosen yet we still ask, to learn whether the helper itself is set up.
@@ -388,6 +391,10 @@
   }
 
   function loadPlayers() {
+    if (local) {
+      if (state.screen === 'setup') renderPlayers(local.players());
+      return;
+    }
     getJson('api/players', function (err, data) {
       if (state.screen !== 'setup') return;
       renderPlayers(!err && data && data.players && data.players.length ? data.players : []);
@@ -460,7 +467,16 @@
   // ---------- start ----------
 
   state.player = L.pickPlayer(window.location.search, readStored());
-  if (!state.player && (demo || window.PosterLightDemo)) state.player = 'any';   // demo pages skip the setup screen
+  if (!state.player && (demo || (local && local.demo))) state.player = 'any';   // demo pages skip the setup screen
+
+  if (local && local.setupUrl) {
+    byId('open-setup').href = local.setupUrl;
+    if (local.setupHint) byId('unconfigured-hint').textContent = local.setupHint;
+  }
+  if (local && local.accountUrl) {
+    byId('account-link').href = local.accountUrl;
+    byId('account-link').style.display = '';
+  }
 
   updateLayout();
   requestWakeLock();
