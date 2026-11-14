@@ -7,7 +7,7 @@
   "engines": { "node": ">=18" },
   "scripts": {
     "start": "node server.js",
-    "test": "node --test tests/",
+    "test": "node --test",
     "library": "node scripts/list-library.js",
     "icons": "node scripts/build-icons.js"
   }
