@@ -24,13 +24,9 @@ test('screen: setup when no player is chosen', function () {
   assert.strictEqual(L.computeView(status(), ctx({ hasPlayer: false })).screen, 'setup');
 });
 
-test('the setup screen is never dimmed', function () {
-  assert.strictEqual(L.computeView(null, ctx({ hasPlayer: false })).overlay, 'full');
-});
-
-test('a helper that is not set up yet shows the unconfigured screen at full brightness', function () {
+test('a helper that is not set up yet shows the unconfigured screen', function () {
   var v = L.computeView({ state: 'setup', media: null }, ctx({ hasPlayer: false }));
-  assert.deepStrictEqual(v, { screen: 'unconfigured', overlay: 'full', card: 'hidden' });
+  assert.deepStrictEqual(v, { screen: 'unconfigured', card: 'hidden', sign: 'Now Showing' });
   assert.strictEqual(L.computeView({ state: 'setup' }, ctx()).screen, 'unconfigured');
 });
 
@@ -45,19 +41,14 @@ test('screen: intermission and now', function () {
   assert.strictEqual(L.computeView(status(), ctx()).screen, 'now');
 });
 
-test('dim with no tap hides the card', function () {
-  assert.deepStrictEqual(L.computeView(status(), ctx()), { screen: 'now', overlay: 'dim', card: 'hidden' });
+test('a playing movie shows the cast, with no dimming', function () {
+  assert.deepStrictEqual(L.computeView(status(), ctx()), { screen: 'now', card: 'cast', sign: 'Now Showing' });
 });
 
-test('a tap wakes to full for 30 seconds', function () {
-  var awake = L.computeView(status(), ctx({ lastTapMs: 1000000 - 29999 }));
-  assert.deepStrictEqual(awake, { screen: 'now', overlay: 'full', card: 'cast' });
-  var asleep = L.computeView(status(), ctx({ lastTapMs: 1000000 - 30000 }));
-  assert.strictEqual(asleep.overlay, 'dim');
-});
-
-test('full brightness shows the cast', function () {
-  assert.strictEqual(L.computeView(status({ brightness: 'full' }), ctx()).card, 'cast');
+test('an idle status with a library poster shows it under a Coming Soon sign', function () {
+  var s = status({ state: 'idle', player: null });
+  s.media = { type: 'movie', title: 'Heat', posterShape: 'portrait', cast: [] };
+  assert.deepStrictEqual(L.computeView(s, ctx()), { screen: 'now', card: 'hidden', sign: 'Coming Soon' });
 });
 
 test('the poster fits a measured box', function () {
@@ -71,7 +62,7 @@ test('the corner buttons hide after 10 seconds', function () {
   assert.strictEqual(L.CONTROLS_MS, 10000);
 });
 
-test('full brightness with no cast hides the card', function () {
+test('no cast hides the card', function () {
   var s = status({ brightness: 'full' });
   s.media = { type: 'movie', title: 'X', posterShape: 'portrait', cast: [] };
   assert.strictEqual(L.computeView(s, ctx()).card, 'hidden');
@@ -83,14 +74,9 @@ test('music never shows the card', function () {
   assert.strictEqual(L.computeView(s, ctx()).card, 'hidden');
 });
 
-test('intermission and idle hide the card; a tap still wakes them', function () {
-  var v = L.computeView(status({ state: 'intermission' }), ctx({ lastTapMs: 999999 }));
-  assert.deepStrictEqual(v, { screen: 'intermission', overlay: 'full', card: 'hidden' });
-  assert.strictEqual(L.computeView(null, ctx()).overlay, 'dim');
-});
-
-test('the intermission sign sits at the soft level, not the darkest one', function () {
-  assert.strictEqual(L.computeView(status({ state: 'intermission' }), ctx()).overlay, 'soft');
+test('intermission and idle hide the card', function () {
+  assert.deepStrictEqual(L.computeView(status({ state: 'intermission' }), ctx()), { screen: 'intermission', card: 'hidden', sign: 'Now Showing' });
+  assert.strictEqual(L.computeView(null, ctx()).card, 'hidden');
 });
 
 var SIZES = [[768, 1024], [1024, 768], [800, 1280], [1280, 800], [390, 844], [844, 390], [360, 800], [800, 360]];

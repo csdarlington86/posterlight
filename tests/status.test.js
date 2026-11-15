@@ -85,3 +85,32 @@ test('the status never carries a Plex path, a source URL, or a token', function 
   assert.ok(text.indexOf('thumb') === -1);
   assert.ok(text.indexOf('X-Plex-Token') === -1);
 });
+
+test('while a title plays the poster rotates through the other posters every 5 minutes', function () {
+  var t = 0;
+  var d = deps({ now: function () { return t; }, postersFor: function () { return ['/alt/1', '/alt/2']; } });
+  function source() { return d.images.sourceFor(buildStatus(view(), d).media.posterId); }
+  assert.strictEqual(source(), '/library/metadata/101/thumb/1');
+  t = 299999; assert.strictEqual(source(), '/library/metadata/101/thumb/1');
+  t = 300000; assert.strictEqual(source(), '/alt/1');
+  t = 600000; assert.strictEqual(source(), '/alt/2');
+  t = 900000; assert.strictEqual(source(), '/library/metadata/101/thumb/1');
+});
+
+test('with nothing playing the poster rotates through the library every 5 minutes', function () {
+  var t = 0;
+  var list = [
+    { title: 'Heat', year: 1995, contentRating: 'R', durationMs: 10200000, thumb: '/heat' },
+    { title: 'Jaws', year: 1975, contentRating: 'PG', durationMs: 7440000, thumb: '/jaws' }
+  ];
+  var d = deps({ now: function () { return t; }, library: function () { return list; } });
+  var idle = { plexOk: true, state: 'idle', brightness: 'dim', session: null, offsetMs: 0, startedAt: null };
+  var s = buildStatus(idle, d);
+  assert.strictEqual(s.state, 'idle');
+  assert.strictEqual(s.player, null);
+  assert.deepStrictEqual([s.media.title, s.media.year, s.media.rating, s.media.runtimeMin, s.media.cast.length], ['Heat', 1995, 'R', 170, 0]);
+  assert.strictEqual(d.images.sourceFor(s.media.posterId), '/heat');
+  t = 300000;
+  assert.strictEqual(buildStatus(idle, d).media.title, 'Jaws');
+  assert.strictEqual(buildStatus(idle, deps({ library: function () { return []; } })).media, null);
+});

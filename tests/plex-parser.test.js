@@ -114,3 +114,17 @@ test('the Plex title is used; the file name is the fallback', function () {
   assert.strictEqual(one({ title: 'Heat 1995 1080p BluRay x264-GRP', Media: media }), 'Heat');
   assert.strictEqual(one({}), '');
 });
+
+test('parsePosters lists the other posters and leaves out the one in use', function () {
+  var json = { MediaContainer: { Metadata: [{ thumb: '/a', selected: true }, { thumb: 'https://img.example/b.jpg' }, { key: '/c' }, {}, null] } };
+  assert.deepStrictEqual(parser.parsePosters(json), ['https://img.example/b.jpg', '/c']);
+  assert.deepStrictEqual(parser.parsePosters(null), []);
+});
+
+test('the movie libraries and their movies are read', function () {
+  var sections = { MediaContainer: { Directory: [{ type: 'movie', key: '1' }, { type: 'show', key: '2' }, null, { type: 'movie' }] } };
+  assert.deepStrictEqual(parser.parseMovieSections(sections), ['1']);
+  assert.deepStrictEqual(parser.parseMovieSections(null), []);
+  var all = { MediaContainer: { Metadata: [{ title: 'Heat', year: 1995, contentRating: 'R', duration: 10200000, thumb: '/heat' }, { title: 'No Poster' }] } };
+  assert.deepStrictEqual(parser.parseLibraryMovies(all), [{ title: 'Heat', year: 1995, contentRating: 'R', durationMs: 10200000, thumb: '/heat' }]);
+});

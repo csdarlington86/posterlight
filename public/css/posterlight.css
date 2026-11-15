@@ -383,16 +383,7 @@ a.player-button { text-decoration: none; text-align: center; }
 }
 .setup-hint { max-width: 24em; margin: 0.8em auto 1em auto; font-size: 0.85em; color: #C9BFAE; }
 
-/* ---------- dimmer, gear, offline dot ---------- */
-.dimmer {
-  position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px;
-  background: #000; opacity: 0; pointer-events: none;
-  -webkit-transition: opacity 2s ease; transition: opacity 2s ease;
-  -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0);
-}
-.dimmer.is-soft { opacity: 0.42; }
-.dimmer.is-dim { opacity: 0.8; }
-
+/* ---------- corner buttons, offline dot ---------- */
 /* Corner buttons: back to the player list, and full screen. They hide 10 seconds after a tap. */
 .controls {
   position: absolute; top: 0.4em; left: 0.4em;

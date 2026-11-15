@@ -14,10 +14,10 @@
   function byId(id) { return document.getElementById(id); }
 
   var el = {
-    app: byId('app'), fader: byId('fader'), dimmer: byId('dimmer'), gear: byId('gear'), controls: byId('controls'), fullscreen: byId('fullscreen'), offline: byId('offline'),
+    app: byId('app'), fader: byId('fader'), gear: byId('gear'), controls: byId('controls'), fullscreen: byId('fullscreen'), offline: byId('offline'),
     playerList: byId('player-list'), setupHint: byId('setup-hint'),
     posterArea: byId('poster-area'), frame: byId('frame'), frameInner: byId('frame-inner'), glow: byId('poster-glow'), poster: byId('poster'), posterFallback: byId('poster-fallback'),
-    title: byId('title'), subtitle: byId('subtitle'), rating: byId('rating'), runtime: byId('runtime'), year: byId('year'),
+    marqueeText: byId('marquee-text'), title: byId('title'), subtitle: byId('subtitle'), rating: byId('rating'), runtime: byId('runtime'), year: byId('year'),
     card: byId('card'), cardCast: byId('card-cast'),
     intermissionTitle: byId('intermission-title')
   };
@@ -31,7 +31,6 @@
     status: null,          // last good answer from the helper
     lastTapMs: 0,
     failures: 0,
-    answered: false,       // true after the first answer, or the first failure
     shape: null,
     screen: null,
     layout: null,
@@ -193,6 +192,7 @@
     return 'img/' + encodeURIComponent(id) + '?w=' + L.imageSize(cssW, dpr) + '&h=' + L.imageSize(cssH, dpr);
   }
 
+  var posterTimer = null;
   function updatePoster(media) {
     var layout = state.layout;
     var key = (media.posterId || '') + '|' + layout.posterW + 'x' + layout.posterH;
@@ -200,15 +200,19 @@
     var sameArt = state.posterKey.split('|')[0] === (media.posterId || '');
     state.posterKey = key;
     setText(el.posterFallback, media.title);
+    if (posterTimer) { window.clearTimeout(posterTimer); posterTimer = null; }
     if (!media.posterId) {
       setClass(el.poster, 'is-loaded', false);
       el.poster.removeAttribute('src');
       return;
     }
-    if (!sameArt) setClass(el.poster, 'is-loaded', false);
+    var src = imageUrl(media.posterId, layout.posterW, layout.posterH);
     el.poster.onload = function () { setClass(el.poster, 'is-loaded', true); };
     el.poster.onerror = function () { setClass(el.poster, 'is-loaded', false); };
-    el.poster.src = imageUrl(media.posterId, layout.posterW, layout.posterH);
+    if (sameArt || !el.poster.getAttribute('src')) { el.poster.src = src; return; }
+    // A different poster: fade the old one out, then load the new one. It fades in when it is ready.
+    setClass(el.poster, 'is-loaded', false);
+    posterTimer = window.setTimeout(function () { posterTimer = null; el.poster.src = src; }, 950);
   }
 
   function buildCastCell(person) {
@@ -301,15 +305,11 @@
     }
 
     showScreen(view.screen);
+    setText(el.marqueeText, view.sign);
     if ((view.screen === 'now' || view.screen === 'intermission') && status.media) updateMedia(status.media);
 
     setClass(el.card, 'is-shown', view.card !== 'hidden');
     setClass(el.cardCast, 'is-shown', view.card === 'cast');
-
-    // Stay bright until the helper has answered once, so the page does not dim and then brighten on load.
-    var overlay = state.answered ? view.overlay : 'full';
-    setClass(el.dimmer, 'is-soft', overlay === 'soft');
-    setClass(el.dimmer, 'is-dim', overlay === 'dim');
 
     setClass(el.controls, 'is-shown', now - state.lastTapMs < L.CONTROLS_MS);
     el.gear.style.display = view.screen === 'setup' ? 'none' : '';
@@ -323,7 +323,6 @@
     // The website (web app and demo) brings its own data source and has no helper to ask.
     if (local) {
       state.failures = 0;
-      state.answered = true;
       window.setTimeout(poll, POLL_MS);
       try {
         state.status = local.status(state.player || 'any');
@@ -342,7 +341,6 @@
         state.failures = 0;
         state.status = data;
       }
-      state.answered = true;
       // Schedule the next request first. If drawing ever fails, the screen still recovers by itself.
       window.setTimeout(poll, POLL_MS);
       try { render(); } catch (e) { /* the next poll draws again */ }
@@ -505,7 +503,7 @@
     // Some browsers (iOS 12 home-screen apps among them) can miss a resize event after a rotation.
     // Checking the size once a second costs almost nothing and makes rotation reliable.
     updateLayout();
-    render();   // also lets the 30 second tap-wake run out
+    render();   // also lets the corner buttons hide
   }, 1000);
   // Web fonts change text widths when they arrive, so measure the bulb strips again.
   window.setTimeout(function () { buildBulbs(); }, 1500);

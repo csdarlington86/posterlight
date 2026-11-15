@@ -292,30 +292,29 @@ PosterLight has a demo mode. It shows each screen without playing anything. Add 
 
 | Address ending | What you should see |
 | --- | --- |
-| `/?demo=movie` | Full brightness. Marquee with chasing bulbs, poster, title, rating, runtime, cast strip. |
-| `/?demo=movie-dim` | Dim poster glow. The card is hidden. |
+| `/?demo=movie` | Marquee with chasing bulbs, poster, title, rating, runtime, cast strip. |
 | `/?demo=movie-long` | A very long title. It must stay inside the screen. |
 | `/?demo=tv` | Show title, season and episode line, season art. |
 | `/?demo=music` | Square album art, no card. |
 | `/?demo=intermission` | The Intermission sign. |
+| `/?demo=coming-soon` | A "Coming Soon" sign over a library poster. No cast strip. |
 | `/?demo=idle` | A faint "No Feature Playing" sign. |
 
 On each device:
 
 1. Open `/?demo=movie`. Check that the bulbs chase, the poster is not cropped, and nothing overlaps.
 2. Rotate the device. The layout fades and switches: poster on top in portrait, poster on the left in landscape. The page does not reload.
-3. Open `/?demo=movie-dim`. Tap the screen. It brightens, and dims again after 30 seconds.
+3. Tap the screen. The back arrow and the full-screen button show, and hide again after 10 seconds.
 4. Open the page from the home screen icon. Check that it fills the screen and stays clear of the notch and rounded corners.
 5. Leave it for 10 minutes. Check that the screen stays on.
 
 Then check a real movie:
 
 1. Open the page with no `?demo=`. Play a movie on the player this device follows.
-2. The poster appears within a few seconds, at full brightness.
+2. The poster appears within a few seconds.
 3. Pause for more than 10 seconds. The Intermission sign appears. Press play. The poster returns.
-4. After 3 minutes of playback the screen dims.
-5. Stop the movie. The "No Feature Playing" sign appears.
-6. Turn the device's Wi-Fi off for a minute during a movie, then on again. The screen stays as it was and catches up with no touch. A small dim dot in the bottom left corner shows while the connection is lost.
+4. Stop the movie. The "No Feature Playing" sign appears.
+5. Turn the device's Wi-Fi off for a minute during a movie, then on again. The screen stays as it was and catches up with no touch. A small dim dot in the bottom left corner shows while the connection is lost.
 
 ### What was tested, and what was not
 
@@ -326,11 +325,11 @@ Then check a real movie:
 
 ## What the screen does
 
-- **First 3 minutes of a title:** full brightness, with the cast strip.
-- **After that:** a dim poster glow. The web cannot change a screen's real brightness, so "dim" is a dark layer over the page.
-- **Tap:** full brightness for 30 seconds.
+- **While a title plays:** the poster, the title, and the cast strip. The screen does not dim.
+- **Tap:** the back arrow and the full-screen button show for 10 seconds.
 - **Paused for more than 10 seconds:** the Intermission sign.
-- **Nothing playing:** a faint "No Feature Playing" sign.
+- **Every 5 minutes:** the poster fades to another poster that Plex has for the same title, if there is one.
+- **Nothing playing:** a "Coming Soon" sign over posters of movies in your library. A new poster fades in every 5 minutes. With no movie library, a faint "No Feature Playing" sign shows.
 - Everything drifts a few pixels over 4 minutes, so nothing burns into the screen.
 
 Every device that follows the same player shows the same thing. Devices ask the helper every 2 seconds, so two screens can differ by up to 2 seconds.

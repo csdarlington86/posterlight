@@ -3,29 +3,24 @@
 (function (root) {
   'use strict';
 
-  var TAP_WAKE_MS = 30000;
   var CONTROLS_MS = 10000;   // the corner buttons hide this long after the last tap
 
-  // Decides which screen shows, how dark the overlay is, and what the card holds.
+  // Decides which screen shows and what the card holds.
   function computeView(status, ctx) {
-    var awake = ctx.nowMs - ctx.lastTapMs < TAP_WAKE_MS;
     var screen;
     if (status && status.state === 'setup') screen = 'unconfigured';   // the helper has no Plex settings yet
     else if (!ctx.hasPlayer) screen = 'setup';
-    else if (!status || status.state === 'idle' || !status.media) screen = 'idle';
+    else if (!status || !status.media) screen = 'idle';
     else if (status.state === 'intermission') screen = 'intermission';
-    else screen = 'now';
+    else screen = 'now';   // an idle status with media is a poster from the library
 
     var isNow = screen === 'now';
     var isMusic = isNow && status.media.type === 'track';
-    var full = awake || screen === 'setup' || screen === 'unconfigured' || (screen !== 'idle' && status.brightness === 'full');
-
-    // 'soft' is the in-between level, used for the intermission sign.
-    var overlay = full ? 'full' : (screen === 'intermission' ? 'soft' : 'dim');
     var card = 'hidden';
-    if (isNow && !isMusic && full && status.media.cast && status.media.cast.length) card = 'cast';
+    if (isNow && !isMusic && status.media.cast && status.media.cast.length) card = 'cast';
 
-    return { screen: screen, overlay: overlay, card: card };
+    var sign = status && status.state === 'idle' ? 'Coming Soon' : 'Now Showing';
+    return { screen: screen, card: card, sign: sign };
   }
 
   function clamp(value, low, high) {
@@ -99,7 +94,6 @@
   }
 
   var api = {
-    TAP_WAKE_MS: TAP_WAKE_MS,
     CONTROLS_MS: CONTROLS_MS,
     computeView: computeView,
     computeLayout: computeLayout,

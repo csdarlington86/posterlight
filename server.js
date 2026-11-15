@@ -25,6 +25,7 @@ var DATA_DIR = process.env.POSTERLIGHT_DATA || path.join(ROOT, 'data');
 var PLAYERS_FILE = path.join(DATA_DIR, 'players.json');
 var CLIENT_ID_FILE = path.join(DATA_DIR, 'client-id');
 var POLL_MS = 2000;
+var LIBRARY_REFRESH_MS = 6 * 60 * 60 * 1000;
 var SETUP_STATUS = { plexOk: false, player: null, state: 'setup', brightness: 'full', media: null };
 
 var port = configFile.loadPort(CONFIG_PATH, process.env);
@@ -36,6 +37,9 @@ var tracker = null;
 var plexWasOk = null;
 var savedPlayers = '';
 var castCache = {};         // metadata key -> cast list, or 'pending'
+var posterCache = {};       // metadata key -> other posters of the title, or 'pending'
+var library = [];           // up to 200 movies per library, for the idle screen
+var libraryAt = null;       // when the library was last asked for
 
 function trim(cache, max) {
   var keys = Object.keys(cache);
@@ -62,8 +66,45 @@ function fetchDetails(client, session) {
   });
 }
 
+// Asks Plex for up to 200 movies per library, in random order. A new set comes every 6 hours.
+function refreshLibrary() {
+  var client = plex;
+  if (!client) return;
+  client.getJson('/library/sections').then(function (json) {
+    return Promise.all(parser.parseMovieSections(json).map(function (key) {
+      return client.getJson('/library/sections/' + encodeURIComponent(key) + '/all?type=1&sort=random&X-Plex-Container-Start=0&X-Plex-Container-Size=200').then(parser.parseLibraryMovies);
+    }));
+  }).then(function (lists) {
+    if (client === plex) library = [].concat.apply([], lists);
+  }).catch(function () {
+    libraryAt = Date.now() - LIBRARY_REFRESH_MS + 60000;   // try again in a minute
+  });
+}
+
 var deps = {
   images: images,
+  postersFor: function (session) {
+    var key = castKey(session);
+    var client = plex;
+    if (!key || !client) return null;
+    if (!posterCache[key]) {
+      posterCache[key] = 'pending';
+      trim(posterCache, 50);
+      client.getJson('/library/metadata/' + encodeURIComponent(key) + '/posters').then(parser.parsePosters, function () {
+        return [];   // no other posters: keep the one in use
+      }).then(function (list) {
+        if (client === plex) posterCache[key] = list;
+      });
+    }
+    return posterCache[key] === 'pending' ? null : posterCache[key];
+  },
+  library: function () {
+    if (libraryAt === null || Date.now() - libraryAt > LIBRARY_REFRESH_MS) {
+      libraryAt = Date.now();
+      refreshLibrary();
+    }
+    return library;
+  },
   castFor: function (session) {
     var cast = castCache[castKey(session)];
     return Array.isArray(cast) && cast.length ? cast : null;
@@ -116,7 +157,7 @@ function usePlex(config) {
   plex = createPlexClient({ plexUrl: config.plexUrl, plexToken: config.plexToken });
   tracker = createTracker({ now: Date.now, pauseGraceMs: 10000, fullBrightMs: 180000 });
   plexWasOk = null;
-  castCache = {};
+  castCache = {}; posterCache = {}; library = []; libraryAt = null;
   try {
     tracker.loadPlayers(JSON.parse(fs.readFileSync(PLAYERS_FILE, 'utf8')));
   } catch (e) { /* no saved players yet */ }
