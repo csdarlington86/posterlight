@@ -14,12 +14,11 @@
   function byId(id) { return document.getElementById(id); }
 
   var el = {
-    app: byId('app'), fader: byId('fader'), dimmer: byId('dimmer'), gear: byId('gear'), offline: byId('offline'),
+    app: byId('app'), fader: byId('fader'), dimmer: byId('dimmer'), gear: byId('gear'), controls: byId('controls'), fullscreen: byId('fullscreen'), offline: byId('offline'),
     playerList: byId('player-list'), setupHint: byId('setup-hint'),
-    frameInner: byId('frame-inner'), glow: byId('poster-glow'), poster: byId('poster'), posterFallback: byId('poster-fallback'),
+    posterArea: byId('poster-area'), frame: byId('frame'), frameInner: byId('frame-inner'), glow: byId('poster-glow'), poster: byId('poster'), posterFallback: byId('poster-fallback'),
     title: byId('title'), subtitle: byId('subtitle'), rating: byId('rating'), runtime: byId('runtime'), year: byId('year'),
-    card: byId('card'), cardFact: byId('card-fact'), cardCast: byId('card-cast'),
-    factLabel: byId('fact-label'), factText: byId('fact-text'),
+    card: byId('card'), cardCast: byId('card-cast'),
     intermissionTitle: byId('intermission-title')
   };
 
@@ -149,6 +148,18 @@
     var w = window.innerWidth || document.documentElement.clientWidth || 0;
     var h = window.innerHeight || document.documentElement.clientHeight || 0;
     var next = L.computeLayout(w, h, currentShape());
+    // Set the text size and the arrangement first. Then the title and the cast take their real height,
+    // and the poster gets exactly the space that is left. Nothing can overlap.
+    el.app.style.fontSize = next.baseFont + 'px';
+    setClass(el.app, 'is-landscape', next.orientation === 'landscape');
+    setClass(el.app, 'is-portrait', next.orientation === 'portrait');
+    var edge = el.frame.offsetHeight - el.frameInner.offsetHeight;   // the frame around the poster
+    var areaW = el.posterArea.clientWidth - edge;
+    var areaH = el.posterArea.clientHeight - edge;
+    // In landscape the poster has its own column. Keep a margin there, with room for the corner buttons.
+    if (next.orientation === 'landscape') { areaW = areaW * 0.92; areaH = areaH - 5.2 * next.baseFont; }
+    else areaH = areaH - 0.6 * next.baseFont;   // a small gap above the title
+    if (areaW > 20 && areaH > 20) next = L.computeLayout(w, h, currentShape(), { w: areaW, h: areaH });
     var prev = state.layout;
     if (prev && prev.orientation === next.orientation && prev.posterW === next.posterW &&
         prev.posterH === next.posterH && prev.castCount === next.castCount && prev.baseFont === next.baseFont) {
@@ -251,15 +262,10 @@
       setText(el.runtime, L.formatRuntime(media.runtimeMin));
       setText(el.year, media.year || '');
       setText(el.intermissionTitle, media.subtitle && media.type === 'episode' ? title + ' · ' + media.subtitle : title);
+      updateLayout();   // the title block may have a new height
     }
     updatePoster(media);
     updateCast(media);
-  }
-
-  function updateFact(fact) {
-    setText(el.factLabel, 'Fact ' + (fact.index + 1) + ' of ' + fact.total);
-    setText(el.factText, fact.text);
-    setClass(el.factText, 'is-long', String(fact.text).length > 130);
   }
 
   // ---------- screens ----------
@@ -296,10 +302,8 @@
 
     showScreen(view.screen);
     if ((view.screen === 'now' || view.screen === 'intermission') && status.media) updateMedia(status.media);
-    if (view.card === 'fact') updateFact(status.fact);
 
     setClass(el.card, 'is-shown', view.card !== 'hidden');
-    setClass(el.cardFact, 'is-shown', view.card === 'fact');
     setClass(el.cardCast, 'is-shown', view.card === 'cast');
 
     // Stay bright until the helper has answered once, so the page does not dim and then brighten on load.
@@ -307,8 +311,8 @@
     setClass(el.dimmer, 'is-soft', overlay === 'soft');
     setClass(el.dimmer, 'is-dim', overlay === 'dim');
 
-    var awake = now - state.lastTapMs < L.TAP_WAKE_MS;
-    setClass(el.gear, 'is-shown', awake && view.screen !== 'setup');
+    setClass(el.controls, 'is-shown', now - state.lastTapMs < L.CONTROLS_MS);
+    el.gear.style.display = view.screen === 'setup' ? 'none' : '';
     var plexLost = !!status && status.plexOk === false;
     setClass(el.offline, 'is-shown', state.failures >= FAILURES_BEFORE_DOT || (plexLost && view.screen !== 'unconfigured'));
   }
@@ -457,6 +461,22 @@
     state.status = null;
     render();
   };
+
+  // Full screen hides the browser bars. A home-screen app already has none, so the button hides there.
+  var fsRoot = document.documentElement;
+  var fsEnter = fsRoot.requestFullscreen || fsRoot.webkitRequestFullscreen;
+  var fsExit = document.exitFullscreen || document.webkitExitFullscreen;
+  if (fsEnter && fsExit && !window.navigator.standalone) {
+    el.fullscreen.onclick = function (event) {
+      if (event && event.stopPropagation) event.stopPropagation();
+      try {
+        var done = (document.fullscreenElement || document.webkitFullscreenElement) ? fsExit.call(document) : fsEnter.call(fsRoot);
+        if (done && done.then) done.then(null, function () { /* the browser refused */ });
+      } catch (e) { /* the browser refused */ }
+    };
+  } else {
+    el.fullscreen.style.display = 'none';
+  }
 
   window.addEventListener('resize', scheduleLayout, false);
   window.addEventListener('orientationchange', scheduleLayout, false);

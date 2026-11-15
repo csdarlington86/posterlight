@@ -4,7 +4,7 @@ config.json
 .env.*
 !.env.example
 
-# Runtime state written by the helper (player list, fact history, library list)
+# Runtime state written by the helper (player list)
 data/
 
 # Caches

@@ -4,10 +4,7 @@
   'use strict';
 
   var TAP_WAKE_MS = 30000;
-
-  function hasFact(status) {
-    return !!(status && status.fact && status.fact.text);
-  }
+  var CONTROLS_MS = 10000;   // the corner buttons hide this long after the last tap
 
   // Decides which screen shows, how dark the overlay is, and what the card holds.
   function computeView(status, ctx) {
@@ -21,14 +18,12 @@
 
     var isNow = screen === 'now';
     var isMusic = isNow && status.media.type === 'track';
-    var fact = isNow && !isMusic && hasFact(status);
     var full = awake || screen === 'setup' || screen === 'unconfigured' || (screen !== 'idle' && status.brightness === 'full');
 
-    // 'soft' is the in-between level: a fact at dim level, or the intermission sign.
-    var overlay = full ? 'full' : (fact || screen === 'intermission' ? 'soft' : 'dim');
+    // 'soft' is the in-between level, used for the intermission sign.
+    var overlay = full ? 'full' : (screen === 'intermission' ? 'soft' : 'dim');
     var card = 'hidden';
-    if (fact) card = 'fact';
-    else if (isNow && !isMusic && full && status.media.cast && status.media.cast.length) card = 'cast';
+    if (isNow && !isMusic && full && status.media.cast && status.media.cast.length) card = 'cast';
 
     return { screen: screen, overlay: overlay, card: card };
   }
@@ -38,11 +33,12 @@
   }
 
   // Sizes the poster so it always keeps its shape and is never cropped.
-  function computeLayout(w, h, posterShape) {
+  // The box is the free space measured on the page. Without it, a share of the screen is used.
+  function computeLayout(w, h, posterShape, box) {
     var landscape = w > h;
     var ratio = posterShape === 'square' ? 1 : 2 / 3;   // width / height
-    var boxW = landscape ? 0.42 * w : 0.86 * w;
-    var boxH = landscape ? 0.84 * h : 0.52 * h;
+    var boxW = box ? box.w : (landscape ? 0.42 * w : 0.86 * w);
+    var boxH = box ? box.h : (landscape ? 0.84 * h : 0.52 * h);
     var posterH = Math.max(1, Math.floor(Math.min(boxH, boxW / ratio)));
     if (ratio !== 1) posterH = Math.max(3, posterH - (posterH % 3));  // keeps 2:3 exact in whole pixels
     var posterW = Math.max(1, Math.round(posterH * ratio));
@@ -104,6 +100,7 @@
 
   var api = {
     TAP_WAKE_MS: TAP_WAKE_MS,
+    CONTROLS_MS: CONTROLS_MS,
     computeView: computeView,
     computeLayout: computeLayout,
     queryParam: queryParam,

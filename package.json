@@ -10,7 +10,6 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test",
-    "library": "node scripts/list-library.js",
     "icons": "node scripts/build-icons.js",
     "site": "node scripts/build-site.js"
   }

@@ -4,12 +4,6 @@ var assert = require('node:assert');
 var buildStatus = require('../lib/status').buildStatus;
 var createImageRegistry = require('../lib/image-registry').createImageRegistry;
 
-function facts(n) {
-  var out = [];
-  for (var i = 0; i < n; i++) out.push('Fact number ' + i);
-  return out;
-}
-
 function movieSession() {
   return {
     playerId: 'abc', playerName: 'Living Room', playerState: 'playing', type: 'movie', ratingKey: '101',
@@ -29,25 +23,11 @@ function view(over) {
 
 function deps(over) {
   var d = {
-    factsFor: function () { return facts(20).slice(0, 15); },
-    fallbackFor: function () { return ['Fallback one', 'Fallback two']; },
     images: createImageRegistry()
   };
   Object.keys(over || {}).forEach(function (k) { d[k] = over[k]; });
   return d;
 }
-
-test('a playing movie inside the first slot shows fact 0 of 15', function () {
-  var s = buildStatus(view({ offsetMs: 450000 }), deps());
-  assert.deepStrictEqual(s.fact, { index: 0, total: 15, text: 'Fact number 0' });
-  assert.strictEqual(s.state, 'playing');
-  assert.strictEqual(s.brightness, 'full');
-  assert.deepStrictEqual(s.player, { id: 'abc', name: 'Living Room' });
-});
-
-test('between slots there is no fact', function () {
-  assert.strictEqual(buildStatus(view({ offsetMs: 600000 }), deps()).fact, null);
-});
 
 test('media fields are filled for a movie', function () {
   var d = deps();
@@ -67,45 +47,27 @@ test('media fields are filled for a movie', function () {
   assert.strictEqual(m.cast[1].imgId, null);
 });
 
-test('intermission has no fact', function () {
-  assert.strictEqual(buildStatus(view({ state: 'intermission', offsetMs: 450000 }), deps()).fact, null);
-});
-
-test('a track has square art, no cast, no fact, and an artist subtitle', function () {
+test('a track has square art, no cast, and an artist subtitle', function () {
   var session = movieSession();
   session.type = 'track'; session.artist = 'Miles Davis'; session.album = 'Kind of Blue'; session.cast = [];
   var s = buildStatus(view({ session: session, offsetMs: 450000 }), deps());
-  assert.strictEqual(s.fact, null);
   assert.strictEqual(s.media.posterShape, 'square');
   assert.deepStrictEqual(s.media.cast, []);
   assert.strictEqual(s.media.subtitle, 'Miles Davis · Kind of Blue');
 });
 
-test('an episode shows the show as title and 3 facts', function () {
+test('an episode shows the show as title', function () {
   var session = movieSession();
   session.type = 'episode'; session.title = 'The You You Are'; session.showTitle = 'Severance';
   session.seasonNumber = 2; session.episodeNumber = 5; session.durationMs = 1800000;
-  var s = buildStatus(view({ session: session, offsetMs: 900000 }),
-    deps({ factsFor: function () { return facts(3); } }));
+  var s = buildStatus(view({ session: session, offsetMs: 900000 }), deps());
   assert.strictEqual(s.media.title, 'Severance');
   assert.strictEqual(s.media.subtitle, 'S2 · E5 · The You You Are');
-  assert.deepStrictEqual(s.fact, { index: 1, total: 3, text: 'Fact number 1' });
 });
 
-test('an idle view has no media and no fact', function () {
+test('an idle view has no media', function () {
   var s = buildStatus({ plexOk: true, state: 'idle', brightness: 'dim', session: null, offsetMs: 0, startedAt: null }, deps());
-  assert.deepStrictEqual(s, { plexOk: true, player: null, state: 'idle', brightness: 'dim', media: null, fact: null });
-});
-
-test('with no fact file the fallback facts are used', function () {
-  var s = buildStatus(view({ offsetMs: 2400000 }), deps({ factsFor: function () { return null; } }));
-  assert.deepStrictEqual(s.fact, { index: 0, total: 2, text: 'Fallback one' });
-});
-
-test('with no facts at all there is no fact and no crash', function () {
-  var s = buildStatus(view({ offsetMs: 450000 }),
-    deps({ factsFor: function () { return null; }, fallbackFor: function () { return []; } }));
-  assert.strictEqual(s.fact, null);
+  assert.deepStrictEqual(s, { plexOk: true, player: null, state: 'idle', brightness: 'dim', media: null });
 });
 
 test('castFor replaces the session cast, and the cast is capped at 8', function () {

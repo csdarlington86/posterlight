@@ -3,7 +3,7 @@
 **Now showing at home.**
 
 PosterLight turns a spare tablet or phone into a theater poster case. It shows the poster,
-title, cast, and facts for whatever is playing on your Plex server.
+title, and cast for whatever is playing on your Plex server.
 
 ![PosterLight on a tablet in landscape: a lit NOW SHOWING marquee, a framed poster, the title, and a cast strip](docs/screenshot.jpg)
 
@@ -24,7 +24,6 @@ and it works when a router blocks Plex's secure home addresses. The rest of this
 | Sign in to Plex | Once on each screen | Once, on the helper computer |
 | Where the Plex sign-in is kept | In the browser of each screen | On the helper computer only |
 | Needs Plex secure connections (the default) | Yes | No |
-| "Also in your library" facts | No | Yes |
 
 Both need the Plex account that owns the server, because Plex shows "what is playing" to the owner only.
 
@@ -47,9 +46,8 @@ PosterLight is free and open source (MIT license).
 3. [Connect to Plex](#connect-to-plex)
 4. [Set up a device](#set-up-a-device)
 5. [Choose which player a screen follows](#choose-which-player-a-screen-follows)
-6. [Facts](#facts)
-7. [Check it on real devices](#check-it-on-real-devices)
-8. [What the screen does](#what-the-screen-does)
+6. [Check it on real devices](#check-it-on-real-devices)
+7. [What the screen does](#what-the-screen-does)
 9. [If something is wrong](#if-something-is-wrong)
 10. [Privacy and safety](#privacy-and-safety)
 11. [For developers](#for-developers)
@@ -277,41 +275,16 @@ The device remembers the choice.
 To change it later:
 
 1. Tap the screen.
-2. Tap **Change player** in the top right corner. The button shows for 30 seconds after a tap.
+2. Tap the back arrow in the top left corner. It shows for 10 seconds after a tap.
+
+The button under the arrow switches full screen on and off, where the browser supports it.
+On iPad and iPhone, add PosterLight to the Home Screen to hide the browser bars.
 
 You can also set the player in the address. Use the player's name as Plex shows it:
 
 ```
 http://192.168.1.20:8686/?player=Living Room
 ```
-
-## Facts
-
-Facts come from a shared fact pack: the files in the `facts` folder, one per movie and one per show.
-Anyone can add a title or fix a fact. See [CONTRIBUTING.md](CONTRIBUTING.md) and [facts/README.md](facts/README.md).
-
-- A movie shows up to 15 facts, spread evenly across its runtime.
-- An episode shows 3 facts from its show's file. A fact is not reused until every fact in the file has been shown.
-- A title with no file shows simple facts from Plex: year, director, cast, studio, and other titles in your library.
-- Music shows album art and no facts.
-
-### Add facts for new titles
-
-1. List your library. This reads your Plex library and changes nothing on the server.
-
-   ```bash
-   npm run library
-   ```
-
-2. Read the output. It lists each title with no fact file and the file name to create.
-3. Create the files. Please share them with a pull request, so every PosterLight user gets them.
-4. Check the files:
-
-   ```bash
-   npm test
-   ```
-
-The helper reads fact files again every minute. You do not need to restart it.
 
 ## Check it on real devices
 
@@ -320,7 +293,6 @@ PosterLight has a demo mode. It shows each screen without playing anything. Add 
 | Address ending | What you should see |
 | --- | --- |
 | `/?demo=movie` | Full brightness. Marquee with chasing bulbs, poster, title, rating, runtime, cast strip. |
-| `/?demo=movie-fact` | Soft dim level. The card shows a fact. |
 | `/?demo=movie-dim` | Dim poster glow. The card is hidden. |
 | `/?demo=movie-long` | A very long title. It must stay inside the screen. |
 | `/?demo=tv` | Show title, season and episode line, season art. |
@@ -356,13 +328,12 @@ Then check a real movie:
 
 - **First 3 minutes of a title:** full brightness, with the cast strip.
 - **After that:** a dim poster glow. The web cannot change a screen's real brightness, so "dim" is a dark layer over the page.
-- **When a fact is due:** the fact fades in softly for about 60 seconds, then hides.
 - **Tap:** full brightness for 30 seconds.
 - **Paused for more than 10 seconds:** the Intermission sign.
 - **Nothing playing:** a faint "No Feature Playing" sign.
 - Everything drifts a few pixels over 4 minutes, so nothing burns into the screen.
 
-Every device that follows the same player shows the same fact. Devices ask the helper every 2 seconds, so two screens can differ by up to 2 seconds.
+Every device that follows the same player shows the same thing. Devices ask the helper every 2 seconds, so two screens can differ by up to 2 seconds.
 
 ## If something is wrong
 
@@ -378,7 +349,6 @@ Every device that follows the same player shows the same fact. Devices ask the h
 | A device cannot open the page | Check that the device is on the same Wi-Fi. Check the firewall step for your system. |
 | The player list is empty | Start something playing in Plex. Or tap **Any player**. |
 | The poster is missing but the title shows | Open `http://<helper address>/healthz`. `"plexOk": true` means the helper reaches Plex. |
-| A title shows only simple facts | It has no fact file yet. See [Facts](#facts). |
 | The screen turns off | Follow the "Keep the screen on" steps for that device. |
 | The screen shows an old title after Plex went offline | The helper keeps the last screen until the title's runtime ends, then shows the idle sign. |
 
@@ -410,15 +380,11 @@ Runs all tests with Node's built-in test runner. There are no dependencies to in
 | `server.js` | Starts the helper: Plex polling and the web server. |
 | `lib/plex-parser.js` | Turns Plex responses into plain objects. |
 | `lib/session-tracker.js` | Playing, paused, intermission, idle, and brightness, per player. |
-| `lib/fact-scheduler.js` | Where in a title each fact appears. |
-| `lib/fact-store.js` | Reads fact files and picks facts with no repeats. |
-| `lib/fallback-facts.js` | Facts from Plex data for titles with no file. |
 | `lib/plex-client.js` | The only code that holds the Plex token. |
 | `lib/plex-account.js` | "Sign in with Plex" against plex.tv. |
 | `lib/setup.js` | The setup steps, and the rules for who may use them. |
 | `lib/http-server.js` | The page, `/api/status`, `/api/players`, `/img/<id>`. |
 | `public/` | The page. Plain ES5 JavaScript with no build step, for iOS 12 Safari. |
-| `scripts/list-library.js` | `npm run library`. |
 | `scripts/build-icons.js` | `npm run icons`. Draws the logo and writes the SVG and PNG icons. |
 | `lib/web-engine.js`, `lib/web-connect.js` | The web app's engine and Plex sign-in. They run in the browser and reuse the helper's modules. |
 | `site/`, `scripts/build-site.js` | The public website: landing page, web app, and demo. |

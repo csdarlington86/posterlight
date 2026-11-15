@@ -90,17 +90,6 @@ test('an unknown player state counts as playing', function () {
   assert.strictEqual(parser.parseSessions(f)[0].playerState, 'playing');
 });
 
-test('library items are normalized', function () {
-  var items = parser.parseLibraryItems(fixture('library-movies'));
-  assert.deepStrictEqual(items[0], {
-    ratingKey: '101', type: 'movie', title: 'Alien', year: 1979, studio: '20th Century Fox',
-    directors: ['Ridley Scott'], cast: ['Sigourney Weaver', 'Tom Skerritt']
-  });
-  assert.strictEqual(items[1].type, 'show');
-  assert.deepStrictEqual(items[1].directors, []);
-  assert.deepStrictEqual(parser.parseLibraryItems(null), []);
-});
-
 test('parseCast reads the Role list of a metadata response', function () {
   var cast = parser.parseCast(fixture('sessions-movie'));
   assert.strictEqual(cast.length, 3);
@@ -108,9 +97,20 @@ test('parseCast reads the Role list of a metadata response', function () {
   assert.deepStrictEqual(parser.parseCast(null), []);
 });
 
-test('parseGuids reads the external ids of a metadata response', function () {
-  var json = { MediaContainer: { Metadata: [{ guid: 'plex://movie/5d77', Guid: [{ id: 'imdb://tt0078748' }, { id: 'tmdb://348' }, {}, null] }] } };
-  assert.deepStrictEqual(parser.parseGuids(json), ['imdb://tt0078748', 'tmdb://348']);
-  assert.deepStrictEqual(parser.parseGuids({ MediaContainer: { Metadata: [{}] } }), []);
-  assert.deepStrictEqual(parser.parseGuids(null), []);
+test('a title that is really a file name is tidied', function () {
+  assert.strictEqual(parser.cleanTitle('Friday The 13th: Part 2 1981 SHOUT 1080p BluRay x265 5.1-RARBG'), 'Friday The 13th: Part 2');
+  assert.strictEqual(parser.cleanTitle('Movie.Name.1999.720p.WEB-DL.x264'), 'Movie Name');
+  assert.strictEqual(parser.cleanTitle('Blade Runner 2049'), 'Blade Runner 2049');
+});
+
+test('the Plex title is used; the file name is the fallback', function () {
+  function one(m) {
+    m.type = 'movie'; m.Player = { machineIdentifier: 'p1' };
+    return parser.parseSessions({ MediaContainer: { Metadata: [m] } })[0].title;
+  }
+  var media = [{ Part: [{ file: '/films/Heat.1995.1080p.BluRay.x264-GRP.mkv' }] }];
+  assert.strictEqual(one({ title: 'Heat', Media: media }), 'Heat');
+  assert.strictEqual(one({ Media: media }), 'Heat');
+  assert.strictEqual(one({ title: 'Heat 1995 1080p BluRay x264-GRP', Media: media }), 'Heat');
+  assert.strictEqual(one({}), '');
 });

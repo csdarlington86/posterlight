@@ -5,7 +5,6 @@ WORKDIR /app
 COPY package.json server.js ./
 COPY lib ./lib
 COPY public ./public
-COPY facts ./facts
 COPY scripts ./scripts
 
 # Settings and state live in /data, so they survive an update of the image.

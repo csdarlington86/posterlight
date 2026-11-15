@@ -10,8 +10,6 @@ services:
       - "8686:8686"
     volumes:
       - posterlight-data:/data
-      # Optional: your own fact files, shared with the container.
-      # - ./facts:/app/facts
 
 volumes:
   posterlight-data:

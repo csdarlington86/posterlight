@@ -138,7 +138,7 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 .marquee {
   -webkit-flex: none; flex: none;
   -webkit-align-self: center; align-self: center;
-  width: 100%; max-width: 22em;
+  width: calc(100% - 2.8em); max-width: 22em;   /* leaves the corners free for the buttons */
   padding: 0.45em 0.5em;
   border: 0.12em solid #FFC857; border-radius: 0.7em;
   background: #1D1814;
@@ -158,7 +158,8 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 
 .poster-area {
   position: relative;
-  -webkit-flex: none; flex: none;
+  /* Takes the space left after the sign, the titles, and the cast. app.js fits the poster inside. */
+  -webkit-flex: 1 1 0%; flex: 1 1 0%; min-height: 0;
   display: -webkit-flex; display: flex;
   -webkit-justify-content: center; justify-content: center;
   -webkit-align-items: center; align-items: center;
@@ -204,8 +205,8 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 }
 
 .titles {
-  -webkit-flex: 1 1 0%; flex: 1 1 0%;
-  min-height: 0; overflow: hidden;
+  -webkit-flex: none; flex: none;
+  overflow: hidden;
   display: -webkit-flex; display: flex;
   -webkit-align-items: center; align-items: center;
   -webkit-justify-content: center; justify-content: center;
@@ -239,7 +240,7 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 .meta-item { display: inline-block; vertical-align: middle; margin: 0 0.35em; }
 .badge:empty, .meta-item:empty { display: none; }
 
-/* One shared card: a fact, or the cast strip. The two layers cross-fade. */
+/* The cast strip. */
 .card {
   position: relative;
   -webkit-flex: none; flex: none;
@@ -259,19 +260,6 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   -webkit-transition: opacity 1.6s ease; transition: opacity 1.6s ease;
 }
 .card-layer.is-shown { opacity: 1; visibility: visible; }
-
-.card-fact {
-  display: -webkit-flex; display: flex;
-  -webkit-flex-direction: column; flex-direction: column;
-  -webkit-justify-content: center; justify-content: center;
-  text-align: center;
-}
-.fact-label {
-  margin: 0 0 0.45em 0;
-  font-size: 0.68em; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #FFC857;
-}
-.fact-text { margin: 0; font-size: 1.02em; line-height: 1.36; color: #F6EFE2; }
-.fact-text.is-long { font-size: 0.88em; }
 
 .card-cast {
   display: -webkit-flex; display: flex;
@@ -318,6 +306,7 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   width: auto;
 }
 .is-landscape .marquee { max-width: none; }
+.is-landscape .titles { -webkit-flex: 1 1 0%; flex: 1 1 0%; min-height: 0; }
 .is-landscape .card { margin-bottom: 0; }
 
 /* ---------- signs: intermission and idle ---------- */
@@ -404,18 +393,26 @@ a.player-button { text-decoration: none; text-align: center; }
 .dimmer.is-soft { opacity: 0.42; }
 .dimmer.is-dim { opacity: 0.8; }
 
-.gear {
-  position: absolute; top: 0.6em; right: 0.6em;
-  padding: 0.45em 0.8em;
-  font: inherit; font-size: 0.72em; font-weight: 600; color: #C9BFAE;
-  background: rgba(20, 17, 15, 0.8); border: 1px solid #7A5C1E; border-radius: 2em;
-  -webkit-appearance: none; appearance: none;
+/* Corner buttons: back to the player list, and full screen. They hide 10 seconds after a tap. */
+.controls {
+  position: absolute; top: 0.4em; left: 0.4em;
   opacity: 0; visibility: hidden;
   -webkit-transition: opacity 0.5s ease; transition: opacity 0.5s ease;
 }
-.gear.is-shown { opacity: 1; visibility: visible; }
+.controls.is-shown { opacity: 1; visibility: visible; }
+.ctl {
+  display: block; width: 1.8em; height: 1.8em; margin: 0 0 0.3em 0; padding: 0.35em;
+  font: inherit; color: #C9BFAE;
+  background: rgba(20, 17, 15, 0.8); border: 1px solid #7A5C1E; border-radius: 50%;
+  -webkit-appearance: none; appearance: none;
+}
+.ctl svg {
+  display: block; width: 100%; height: 100%;
+  fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.is-landscape .ctl { display: inline-block; vertical-align: top; margin: 0 0.3em 0 0; }
 @supports (padding: env(safe-area-inset-top)) {
-  .gear { top: calc(0.6em + env(safe-area-inset-top)); right: calc(0.6em + env(safe-area-inset-right)); }
+  .controls { top: calc(0.4em + env(safe-area-inset-top)); left: calc(0.4em + env(safe-area-inset-left)); }
 }
 
 .offline {

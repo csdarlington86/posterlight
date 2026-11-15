@@ -9,7 +9,7 @@ var CAST = [{ name: 'A', role: 'B', imgId: null }];
 function status(over) {
   var s = {
     plexOk: true, player: { id: 'abc', name: 'TV' }, state: 'playing', brightness: 'dim',
-    media: { type: 'movie', title: 'Alien', posterShape: 'portrait', cast: CAST }, fact: null
+    media: { type: 'movie', title: 'Alien', posterShape: 'portrait', cast: CAST }
   };
   Object.keys(over || {}).forEach(function (k) { s[k] = over[k]; });
   return s;
@@ -19,7 +19,6 @@ function ctx(over) {
   Object.keys(over || {}).forEach(function (k) { c[k] = over[k]; });
   return c;
 }
-var FACT = { index: 0, total: 15, text: 'A fact' };
 
 test('screen: setup when no player is chosen', function () {
   assert.strictEqual(L.computeView(status(), ctx({ hasPlayer: false })).screen, 'setup');
@@ -30,7 +29,7 @@ test('the setup screen is never dimmed', function () {
 });
 
 test('a helper that is not set up yet shows the unconfigured screen at full brightness', function () {
-  var v = L.computeView({ state: 'setup', media: null, fact: null }, ctx({ hasPlayer: false }));
+  var v = L.computeView({ state: 'setup', media: null }, ctx({ hasPlayer: false }));
   assert.deepStrictEqual(v, { screen: 'unconfigured', overlay: 'full', card: 'hidden' });
   assert.strictEqual(L.computeView({ state: 'setup' }, ctx()).screen, 'unconfigured');
 });
@@ -46,12 +45,8 @@ test('screen: intermission and now', function () {
   assert.strictEqual(L.computeView(status(), ctx()).screen, 'now');
 });
 
-test('dim with no tap and no fact hides the card', function () {
+test('dim with no tap hides the card', function () {
   assert.deepStrictEqual(L.computeView(status(), ctx()), { screen: 'now', overlay: 'dim', card: 'hidden' });
-});
-
-test('dim with a fact shows the fact at the soft level', function () {
-  assert.deepStrictEqual(L.computeView(status({ fact: FACT }), ctx()), { screen: 'now', overlay: 'soft', card: 'fact' });
 });
 
 test('a tap wakes to full for 30 seconds', function () {
@@ -61,9 +56,19 @@ test('a tap wakes to full for 30 seconds', function () {
   assert.strictEqual(asleep.overlay, 'dim');
 });
 
-test('full brightness shows the fact when there is one, else the cast', function () {
-  assert.strictEqual(L.computeView(status({ brightness: 'full', fact: FACT }), ctx()).card, 'fact');
+test('full brightness shows the cast', function () {
   assert.strictEqual(L.computeView(status({ brightness: 'full' }), ctx()).card, 'cast');
+});
+
+test('the poster fits a measured box', function () {
+  var l = L.computeLayout(375, 812, 'portrait', { w: 300, h: 240 });
+  assert.strictEqual(l.posterH, 240);
+  assert.strictEqual(l.posterW, 160);
+  assert.strictEqual(L.computeLayout(375, 812, 'square', { w: 200, h: 240 }).posterW, 200);
+});
+
+test('the corner buttons hide after 10 seconds', function () {
+  assert.strictEqual(L.CONTROLS_MS, 10000);
 });
 
 test('full brightness with no cast hides the card', function () {
@@ -73,13 +78,13 @@ test('full brightness with no cast hides the card', function () {
 });
 
 test('music never shows the card', function () {
-  var s = status({ brightness: 'full', fact: FACT });
+  var s = status({ brightness: 'full' });
   s.media = { type: 'track', title: 'Song', posterShape: 'square', cast: [] };
   assert.strictEqual(L.computeView(s, ctx()).card, 'hidden');
 });
 
 test('intermission and idle hide the card; a tap still wakes them', function () {
-  var v = L.computeView(status({ state: 'intermission', fact: FACT }), ctx({ lastTapMs: 999999 }));
+  var v = L.computeView(status({ state: 'intermission' }), ctx({ lastTapMs: 999999 }));
   assert.deepStrictEqual(v, { screen: 'intermission', overlay: 'full', card: 'hidden' });
   assert.strictEqual(L.computeView(null, ctx()).overlay, 'dim');
 });

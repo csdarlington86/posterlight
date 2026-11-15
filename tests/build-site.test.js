@@ -47,12 +47,12 @@ test('the demo data cycles through screens and honours ?demo=', function () {
   assert.strictEqual(fixed.statusAt(999999).media.type, 'track');
   var tour = load('');
   var seen = {};
-  for (var t = 0; t < 120000; t += 1000) { var s = tour.statusAt(t); seen[s.state + '|' + (s.media ? s.media.type : '-') + '|' + (s.fact ? 'fact' : '')] = true; }
-  assert.ok(seen['playing|movie|'] && seen['playing|movie|fact'] && seen['playing|episode|'] && seen['playing|track|'] && seen['intermission|movie|']);
+  for (var t = 0; t < 120000; t += 1000) { var s = tour.statusAt(t); seen[s.state + '|' + (s.media ? s.media.type : '-') + '|'] = true; }
+  assert.ok(seen['playing|movie|'] && seen['playing|episode|'] && seen['playing|track|'] && seen['intermission|movie|']);
   assert.strictEqual(load('?demo=nope').statusAt(0).media.type, 'movie');
 });
 
-test('the web app bundles the engine, the connect screen, and the fact pack', function () {
+test('the web app bundles the engine, and the connect screen', function () {
   var out = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-site-'));
   site.build(out);
   function read(rel) { return fs.readFileSync(path.join(out, rel), 'utf8'); }
@@ -65,12 +65,6 @@ test('the web app bundles the engine, the connect screen, and the fact pack', fu
     assert.ok(fs.existsSync(path.join(out, 'app', f)), f);
   });
   assert.ok(!fs.existsSync(path.join(out, 'app', 'setup.html')));
-
-  var index = JSON.parse(read('app/facts/index.json'));
-  assert.strictEqual(index.movies.ids['imdb://tt0078748'], 'alien-1979');
-  assert.strictEqual(index.movies.names['alien-1979'], 1);
-  assert.strictEqual(index.shows.names['breaking-bad'], 1);
-  assert.strictEqual(JSON.parse(read('app/facts/movies/alien-1979.json')).title, 'Alien');
 
   // The bundle must load as a plain script in an old browser and give the page a working engine.
   var bundle = read('app/js/posterlight-web.js');

@@ -36,9 +36,6 @@ function world(routes, saved) {
   return { engine: engine, calls: calls, clock: clock, tick: function () { var t = timers.splice(0); t.forEach(function (f) { f(); }); } };
 }
 
-var INDEX = { movies: { ids: { 'imdb://tt0078748': 'alien-1979' }, names: { 'alien-1979': 1 } }, shows: { ids: {}, names: {} } };
-function facts(n) { var o = []; for (var i = 0; i < n; i++) o.push('Alien fact ' + i); return o; }
-
 test('with nothing saved the engine reports that setup is needed and asks nobody', function () {
   var w = world({}, null);
   w.engine.start();
@@ -55,7 +52,7 @@ test('damaged saved settings count as nothing saved', function () {
 });
 
 test('it polls the saved server with the token in a header and shows what is playing', function () {
-  var w = world({ '/status/sessions': MOVIE, '/library/metadata/101': MOVIE, 'facts/index.json': INDEX });
+  var w = world({ '/status/sessions': MOVIE, '/library/metadata/101': MOVIE });
   w.engine.start();
   assert.strictEqual(w.calls[0].url, 'https://a.plex.direct:32400/status/sessions');
   assert.strictEqual(w.calls[0].headers['X-Plex-Token'], 'WEB-TOKEN');
@@ -77,30 +74,6 @@ test('image addresses point at the person\'s own server and ask for the given si
   assert.ok(url.indexOf('url=%2Flibrary%2Fmetadata%2F101%2Fthumb%2F1') !== -1);
   assert.strictEqual(w.engine.imageUrl('unknown-id', 100, 100), '');
   assert.ok(JSON.stringify(s).indexOf('WEB-TOKEN') === -1, 'the status itself never carries the token');
-});
-
-test('a fact file is found by id and its facts appear at the right moment', function () {
-  var w = world({ '/status/sessions': MOVIE, '/library/metadata/101': { MediaContainer: { Metadata: [{ Guid: [{ id: 'imdb://tt0078748' }], Role: [] }] } },
-    'facts/index.json': INDEX, 'facts/movies/alien-1979.json': { title: 'Alien', facts: facts(20) } });
-  w.engine.start();
-  w.engine.status('any');   // starts loading the index and the file
-  w.engine.status('any');
-  // The fixture is 117 minutes long. Slot 0 of 15 starts at 7020000 / 16 = 438750 ms.
-  w.clock.t += 438750 - 60000 + 1000;
-  var s = w.engine.status('any');
-  assert.ok(s.fact, 'a fact is showing');
-  assert.strictEqual(s.fact.total, 15);
-  assert.match(s.fact.text, /^Alien fact \d+$/);
-});
-
-test('with no fact file the Plex-data facts are used', function () {
-  var w = world({ '/status/sessions': MOVIE, '/library/metadata/101': MOVIE, 'facts/index.json': { movies: {}, shows: {} } });
-  w.engine.start();
-  w.engine.status('any');
-  w.clock.t += 2000000;
-  var texts = {};
-  for (var i = 0; i < 4000; i++) { w.clock.t += 1000; var s = w.engine.status('any'); if (s.fact) texts[s.fact.text] = 1; }
-  assert.ok(texts['Alien was released in 1979.'] || texts['Directed by Ridley Scott.'] || Object.keys(texts).length > 0);
 });
 
 test('losing the server keeps the last screen; the next good answer recovers', function () {

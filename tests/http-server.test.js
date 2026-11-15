@@ -12,7 +12,7 @@ function start(over) {
   var deps = {
     publicDir: path.join(__dirname, '..', 'public'),
     images: images,
-    getStatus: function (playerId) { return { plexOk: true, player: null, state: 'idle', brightness: 'dim', media: null, fact: null, asked: playerId }; },
+    getStatus: function (playerId) { return { plexOk: true, player: null, state: 'idle', brightness: 'dim', media: null, asked: playerId }; },
     getPlayers: function () { return [{ id: 'abc', name: 'Living Room', active: true }]; },
     getImage: function (source, w, h) {
       imageCalls.push({ source: source, w: w, h: h });

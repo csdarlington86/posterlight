@@ -14,13 +14,12 @@ var PUBLIC = path.join(ROOT, 'public');
 var LIB = path.join(ROOT, 'lib');
 var SITE = path.join(ROOT, 'site');
 // The screens the demo walks through, and how long each one stays.
-var TOUR = ['movie', 'movie-fact-full', 'tv', 'music', 'intermission'];
+var TOUR = ['movie', 'tv', 'music', 'intermission'];
 var SCREEN_MS = 10000;
 // The helper's own setup page talks to a helper, so it is not part of the website.
 var SKIP = { 'setup.html': true, 'setup.js': true, 'setup.css': true };
 // The helper modules the browser engine needs, in any order.
-var WEB_MODULES = ['slug', 'plex-parser', 'session-tracker', 'fact-scheduler', 'status', 'fallback-facts',
-  'fact-picker', 'web-engine', 'web-connect'];
+var WEB_MODULES = ['plex-parser', 'session-tracker', 'status', 'web-engine', 'web-connect'];
 var APP_MARKER = '<script src="js/app.js"></script>';
 
 function copyDir(from, to) {
@@ -99,33 +98,6 @@ function webBundle() {
   return out + fs.readFileSync(path.join(SITE, 'web-runtime.js'), 'utf8');
 }
 
-// Copies the fact pack and writes an index, so the browser knows which titles have a file.
-function buildFacts(dir) {
-  var index = {};
-  ['movies', 'shows'].forEach(function (kind) {
-    var from = path.join(ROOT, 'facts', kind);
-    var to = path.join(dir, kind);
-    fs.mkdirSync(to, { recursive: true });
-    index[kind] = { ids: {}, names: {} };
-    (fs.existsSync(from) ? fs.readdirSync(from) : []).forEach(function (file) {
-      if (!/\.json$/.test(file)) return;
-      var name = file.replace(/\.json$/, '');
-      var json;
-      try {
-        json = JSON.parse(fs.readFileSync(path.join(from, file), 'utf8'));
-      } catch (e) {
-        return;   // the fact-file tests report a broken file
-      }
-      fs.copyFileSync(path.join(from, file), path.join(to, file));
-      index[kind].names[name] = 1;
-      (Array.isArray(json.ids) ? json.ids : []).forEach(function (id) {
-        if (typeof id === 'string' && id) index[kind].ids[id.toLowerCase()] = name;
-      });
-    });
-  });
-  fs.writeFileSync(path.join(dir, 'index.json'), JSON.stringify(index));
-}
-
 function buildApp(dir) {
   fs.rmSync(dir, { recursive: true, force: true });
   copyDir(PUBLIC, dir);
@@ -136,7 +108,6 @@ function buildApp(dir) {
   fs.copyFileSync(path.join(SITE, 'connect.html'), path.join(dir, 'connect.html'));
   var page = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
   fs.writeFileSync(path.join(dir, 'index.html'), injectBefore(page, ['js/posterlight-web.js', 'js/app-boot.js']));
-  buildFacts(path.join(dir, 'facts'));
 }
 
 function build(outDir) {
