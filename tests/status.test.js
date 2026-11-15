@@ -40,19 +40,13 @@ test('media fields are filled for a movie', function () {
   assert.strictEqual(m.runtimeMin, 120);
   assert.strictEqual(m.posterShape, 'portrait');
   assert.strictEqual(d.images.sourceFor(m.posterId), '/library/metadata/101/thumb/1');
-  assert.strictEqual(m.cast.length, 2);
-  assert.strictEqual(m.cast[0].name, 'Sigourney Weaver');
-  assert.strictEqual(m.cast[0].role, 'Ripley');
-  assert.strictEqual(d.images.sourceFor(m.cast[0].imgId), 'https://metadata-static.plex.tv/people/weaver.jpg');
-  assert.strictEqual(m.cast[1].imgId, null);
 });
 
-test('a track has square art, no cast, and an artist subtitle', function () {
+test('a track has square art and an artist subtitle', function () {
   var session = movieSession();
   session.type = 'track'; session.artist = 'Miles Davis'; session.album = 'Kind of Blue'; session.cast = [];
   var s = buildStatus(view({ session: session, offsetMs: 450000 }), deps());
   assert.strictEqual(s.media.posterShape, 'square');
-  assert.deepStrictEqual(s.media.cast, []);
   assert.strictEqual(s.media.subtitle, 'Miles Davis · Kind of Blue');
 });
 
@@ -68,14 +62,6 @@ test('an episode shows the show as title', function () {
 test('an idle view has no media', function () {
   var s = buildStatus({ plexOk: true, state: 'idle', brightness: 'dim', session: null, offsetMs: 0, startedAt: null }, deps());
   assert.deepStrictEqual(s, { plexOk: true, player: null, state: 'idle', brightness: 'dim', media: null });
-});
-
-test('castFor replaces the session cast, and the cast is capped at 8', function () {
-  var big = [];
-  for (var i = 0; i < 12; i++) big.push({ name: 'Actor ' + i, role: 'Role', thumb: null });
-  var s = buildStatus(view(), deps({ castFor: function () { return big; } }));
-  assert.strictEqual(s.media.cast.length, 8);
-  assert.strictEqual(s.media.cast[0].name, 'Actor 0');
 });
 
 test('the status never carries a Plex path, a source URL, or a token', function () {
@@ -108,7 +94,7 @@ test('with nothing playing the poster rotates through the library every 5 minute
   var s = buildStatus(idle, d);
   assert.strictEqual(s.state, 'idle');
   assert.strictEqual(s.player, null);
-  assert.deepStrictEqual([s.media.title, s.media.year, s.media.rating, s.media.runtimeMin, s.media.cast.length], ['Heat', 1995, 'R', 170, 0]);
+  assert.deepStrictEqual([s.media.title, s.media.year, s.media.rating, s.media.runtimeMin], ['Heat', 1995, 'R', 170]);
   assert.strictEqual(d.images.sourceFor(s.media.posterId), '/heat');
   t = 300000;
   assert.strictEqual(buildStatus(idle, d).media.title, 'Jaws');

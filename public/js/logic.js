@@ -5,7 +5,7 @@
 
   var CONTROLS_MS = 10000;   // the corner buttons hide this long after the last tap
 
-  // Decides which screen shows and what the card holds.
+  // Decides which screen shows and what the sign says.
   function computeView(status, ctx) {
     var screen;
     if (status && status.state === 'setup') screen = 'unconfigured';   // the helper has no Plex settings yet
@@ -14,13 +14,8 @@
     else if (status.state === 'intermission') screen = 'intermission';
     else screen = 'now';   // an idle status with media is a poster from the library
 
-    var isNow = screen === 'now';
-    var isMusic = isNow && status.media.type === 'track';
-    var card = 'hidden';
-    if (isNow && !isMusic && status.media.cast && status.media.cast.length) card = 'cast';
-
     var sign = status && status.state === 'idle' ? 'Coming Soon' : 'Now Showing';
-    return { screen: screen, card: card, sign: sign };
+    return { screen: screen, sign: sign };
   }
 
   function clamp(value, low, high) {
@@ -39,14 +34,10 @@
     var posterW = Math.max(1, Math.round(posterH * ratio));
 
     var small = Math.min(w, h);
-    var cardW = landscape ? 0.5 * w : 0.9 * w;
-    var cell = small >= 600 ? 120 : 84;   // room for a name under each headshot
-
     return {
       orientation: landscape ? 'landscape' : 'portrait',
       posterW: posterW,
       posterH: posterH,
-      castCount: clamp(Math.floor(cardW / cell), 3, 8),
       baseFont: clamp(small / 36, 15, 26)
     };
   }
@@ -85,14 +76,6 @@
     return m ? h + 'h ' + m + 'm' : h + 'h';
   }
 
-  function initials(name) {
-    var words = String(name || '').replace(/^\s+|\s+$/g, '').split(/\s+/);
-    if (!words[0]) return '';
-    var first = words[0].charAt(0);
-    var last = words.length > 1 ? words[words.length - 1].charAt(0) : '';
-    return (first + last).toUpperCase();
-  }
-
   var api = {
     CONTROLS_MS: CONTROLS_MS,
     computeView: computeView,
@@ -100,8 +83,7 @@
     queryParam: queryParam,
     pickPlayer: pickPlayer,
     imageSize: imageSize,
-    formatRuntime: formatRuntime,
-    initials: initials
+    formatRuntime: formatRuntime
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

@@ -12,7 +12,7 @@
 The web app at `csdarlington86.github.io/posterlight/app/` has no helper. The page itself talks to your Plex server.
 
 - Your Plex sign-in token is saved in that browser on that device (`localStorage`), and nowhere else.
-- The page sends it only to your own Plex server and to plex.tv. Poster and cast images are loaded from your own
+- The page sends it only to your own Plex server and to plex.tv. Poster images are loaded from your own
   server with the token in the image address, because an image cannot carry a header.
 - The website is static files on GitHub Pages. It has no server code and receives nothing from you.
 - It loads no scripts, fonts, or trackers from any other site.

@@ -22,7 +22,7 @@ test('build writes a landing page and a demo that needs no helper', function () 
   var shim = page.indexOf('js/demo-static.js');
   assert.ok(shim !== -1 && shim < page.indexOf('js/app.js'), 'the demo data loads before the app');
   ['js/app.js', 'js/logic.js', 'css/posterlight.css', 'fonts/limelight-400.woff2', 'icons/logo.svg',
-   'demo/demo-poster.svg', 'demo/demo-face-1.svg', 'manifest.webmanifest'].forEach(function (f) {
+   'demo/demo-poster.svg', 'manifest.webmanifest'].forEach(function (f) {
     assert.ok(fs.existsSync(path.join(out, 'demo', f)), f);
   });
   assert.ok(!fs.existsSync(path.join(out, 'demo', 'setup.html')), 'the setup page is not part of the demo');

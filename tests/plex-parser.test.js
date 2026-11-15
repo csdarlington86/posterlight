@@ -23,8 +23,6 @@ test('movie session is normalized', function () {
   assert.strictEqual(s.ratingKey, '101');
   assert.strictEqual(s.studio, '20th Century Fox');
   assert.deepStrictEqual(s.directors, ['Ridley Scott']);
-  assert.deepStrictEqual(s.cast[0], { name: 'Sigourney Weaver', role: 'Ripley', thumb: 'https://metadata-static.plex.tv/people/weaver.jpg' });
-  assert.deepStrictEqual(s.cast[2], { name: 'John Hurt', role: 'Kane', thumb: null });
   assert.strictEqual(s.posterPath, '/library/metadata/101/thumb/1');
   assert.strictEqual(s.showTitle, null);
   assert.strictEqual(s.artist, null);
@@ -49,13 +47,12 @@ test('episode poster falls back to show art, then episode art', function () {
   assert.strictEqual(parser.parseSessions(f)[0].posterPath, '/library/metadata/555/thumb/1');
 });
 
-test('track session uses album art and has no cast', function () {
+test('track session uses album art', function () {
   var s = parser.parseSessions(fixture('sessions-track'))[0];
   assert.strictEqual(s.type, 'track');
   assert.strictEqual(s.artist, 'Miles Davis');
   assert.strictEqual(s.album, 'Kind of Blue');
   assert.strictEqual(s.posterPath, '/library/metadata/890/thumb/1');
-  assert.deepStrictEqual(s.cast, []);
 });
 
 test('no Metadata key gives an empty list', function () {
@@ -88,13 +85,6 @@ test('an unknown player state counts as playing', function () {
   var f = fixture('sessions-movie');
   f.MediaContainer.Metadata[0].Player.state = 'weird';
   assert.strictEqual(parser.parseSessions(f)[0].playerState, 'playing');
-});
-
-test('parseCast reads the Role list of a metadata response', function () {
-  var cast = parser.parseCast(fixture('sessions-movie'));
-  assert.strictEqual(cast.length, 3);
-  assert.strictEqual(cast[1].name, 'Tom Skerritt');
-  assert.deepStrictEqual(parser.parseCast(null), []);
 });
 
 test('a title that is really a file name is tidied', function () {

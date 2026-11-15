@@ -3,9 +3,9 @@
 **Now showing at home.**
 
 PosterLight turns a spare tablet or phone into a theater poster case. It shows the poster,
-title, and cast for whatever is playing on your Plex server.
+and title for whatever is playing on your Plex server.
 
-![PosterLight on a tablet in landscape: a lit NOW SHOWING marquee, a framed poster, the title, and a cast strip](docs/screenshot.jpg)
+![PosterLight on a tablet in landscape: a lit NOW SHOWING marquee, a framed poster, and the title](docs/screenshot.jpg)
 
 *The demo screen. The poster, title, and people in it are made up.*
 
@@ -292,12 +292,12 @@ PosterLight has a demo mode. It shows each screen without playing anything. Add 
 
 | Address ending | What you should see |
 | --- | --- |
-| `/?demo=movie` | Marquee with chasing bulbs, poster, title, rating, runtime, cast strip. |
+| `/?demo=movie` | Marquee with chasing bulbs, poster, title, rating, runtime. |
 | `/?demo=movie-long` | A very long title. It must stay inside the screen. |
 | `/?demo=tv` | Show title, season and episode line, season art. |
-| `/?demo=music` | Square album art, no card. |
+| `/?demo=music` | Square album art. |
 | `/?demo=intermission` | The Intermission sign. |
-| `/?demo=coming-soon` | A "Coming Soon" sign over a library poster. No cast strip. |
+| `/?demo=coming-soon` | A "Coming Soon" sign over a library poster. |
 | `/?demo=idle` | A faint "No Feature Playing" sign. |
 
 On each device:
@@ -325,7 +325,7 @@ Then check a real movie:
 
 ## What the screen does
 
-- **While a title plays:** the poster, the title, and the cast strip. The screen does not dim.
+- **While a title plays:** the poster and the title. The screen does not dim.
 - **Tap:** the back arrow and the full-screen button show for 10 seconds.
 - **Paused for more than 10 seconds:** the Intermission sign.
 - **Every 5 minutes:** the poster fades to another poster that Plex has for the same title, if there is one.
@@ -363,7 +363,7 @@ More detail is in [SECURITY.md](SECURITY.md).
 PosterLight is a community project. It is not affiliated with, endorsed by, or sponsored by Plex, Inc.
 "Plex" is a trademark of Plex, Inc.
 
-PosterLight does not use the TMDB, IMDb, or TVDB services. Posters and cast photos come only from your own
+PosterLight does not use the TMDB, IMDb, or TVDB services. Posters come only from your own
 Plex server. The repository ships no real poster images: the demo art is made up.
 
 ## For developers

@@ -18,7 +18,6 @@
     playerList: byId('player-list'), setupHint: byId('setup-hint'),
     posterArea: byId('poster-area'), frame: byId('frame'), frameInner: byId('frame-inner'), glow: byId('poster-glow'), poster: byId('poster'), posterFallback: byId('poster-fallback'),
     marqueeText: byId('marquee-text'), title: byId('title'), subtitle: byId('subtitle'), rating: byId('rating'), runtime: byId('runtime'), year: byId('year'),
-    card: byId('card'), cardCast: byId('card-cast'),
     intermissionTitle: byId('intermission-title')
   };
 
@@ -35,7 +34,6 @@
     screen: null,
     layout: null,
     posterKey: '',
-    castKey: '',
     mediaKey: '',
     playersKey: null,
     playersTimer: null
@@ -138,7 +136,6 @@
     el.glow.style.marginLeft = (-glowW / 2) + 'px';
     el.glow.style.marginTop = (-glowH / 2) + 'px';
     buildBulbs();
-    state.castKey = '';     // the number of headshots may have changed
     state.posterKey = '';   // the poster may need a different size
     render();
   }
@@ -147,7 +144,7 @@
     var w = window.innerWidth || document.documentElement.clientWidth || 0;
     var h = window.innerHeight || document.documentElement.clientHeight || 0;
     var next = L.computeLayout(w, h, currentShape());
-    // Set the text size and the arrangement first. Then the title and the cast take their real height,
+    // Set the text size and the arrangement first. Then the title takes its real height,
     // and the poster gets exactly the space that is left. Nothing can overlap.
     el.app.style.fontSize = next.baseFont + 'px';
     setClass(el.app, 'is-landscape', next.orientation === 'landscape');
@@ -161,7 +158,7 @@
     if (areaW > 20 && areaH > 20) next = L.computeLayout(w, h, currentShape(), { w: areaW, h: areaH });
     var prev = state.layout;
     if (prev && prev.orientation === next.orientation && prev.posterW === next.posterW &&
-        prev.posterH === next.posterH && prev.castCount === next.castCount && prev.baseFont === next.baseFont) {
+        prev.posterH === next.posterH  && prev.baseFont === next.baseFont) {
       return;
     }
     if (prev && prev.orientation !== next.orientation) {
@@ -184,7 +181,7 @@
     window.setTimeout(updateLayout, 600);
   }
 
-  // ---------- media: poster, titles, cast ----------
+  // ---------- media: poster, titles ----------
 
   function imageUrl(id, cssW, cssH) {
     var dpr = window.devicePixelRatio || 1;
@@ -215,44 +212,6 @@
     posterTimer = window.setTimeout(function () { posterTimer = null; el.poster.src = src; }, 950);
   }
 
-  function buildCastCell(person) {
-    var cell = document.createElement('div');
-    cell.className = 'cast-cell';
-    var photo = document.createElement('div');
-    photo.className = 'cast-photo';
-    var initials = document.createElement('div');
-    initials.className = 'cast-initials';
-    initials.textContent = L.initials(person.name);
-    photo.appendChild(initials);
-    if (person.imgId) {
-      var img = document.createElement('img');
-      img.alt = '';
-      img.onload = function () { img.className = 'is-loaded'; };
-      img.src = imageUrl(person.imgId, 96, 96);
-      photo.appendChild(img);
-    }
-    var name = document.createElement('div');
-    name.className = 'cast-name';
-    name.textContent = person.name;
-    var role = document.createElement('div');
-    role.className = 'cast-role';
-    role.textContent = person.role || '';
-    cell.appendChild(photo);
-    cell.appendChild(name);
-    cell.appendChild(role);
-    return cell;
-  }
-
-  function updateCast(media) {
-    var cast = (media.cast || []).slice(0, state.layout.castCount);
-    var key = '';
-    for (var i = 0; i < cast.length; i++) key += cast[i].name + '|' + (cast[i].imgId || '') + ';';
-    if (key === state.castKey) return;
-    state.castKey = key;
-    while (el.cardCast.firstChild) el.cardCast.removeChild(el.cardCast.firstChild);
-    for (var j = 0; j < cast.length; j++) el.cardCast.appendChild(buildCastCell(cast[j]));
-  }
-
   function updateMedia(media) {
     var key = [media.type, media.title, media.subtitle, media.rating, media.runtimeMin, media.year].join('|');
     if (key !== state.mediaKey) {
@@ -269,7 +228,6 @@
       updateLayout();   // the title block may have a new height
     }
     updatePoster(media);
-    updateCast(media);
   }
 
   // ---------- screens ----------
@@ -308,8 +266,6 @@
     setText(el.marqueeText, view.sign);
     if ((view.screen === 'now' || view.screen === 'intermission') && status.media) updateMedia(status.media);
 
-    setClass(el.card, 'is-shown', view.card !== 'hidden');
-    setClass(el.cardCast, 'is-shown', view.card === 'cast');
 
     setClass(el.controls, 'is-shown', now - state.lastTapMs < L.CONTROLS_MS);
     el.gear.style.display = view.screen === 'setup' ? 'none' : '';

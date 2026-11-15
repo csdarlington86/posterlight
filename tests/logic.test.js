@@ -5,11 +5,10 @@ var fs = require('fs');
 var path = require('path');
 var L = require('../public/js/logic.js');
 
-var CAST = [{ name: 'A', role: 'B', imgId: null }];
 function status(over) {
   var s = {
     plexOk: true, player: { id: 'abc', name: 'TV' }, state: 'playing', brightness: 'dim',
-    media: { type: 'movie', title: 'Alien', posterShape: 'portrait', cast: CAST }
+    media: { type: 'movie', title: 'Alien', posterShape: 'portrait' }
   };
   Object.keys(over || {}).forEach(function (k) { s[k] = over[k]; });
   return s;
@@ -26,7 +25,7 @@ test('screen: setup when no player is chosen', function () {
 
 test('a helper that is not set up yet shows the unconfigured screen', function () {
   var v = L.computeView({ state: 'setup', media: null }, ctx({ hasPlayer: false }));
-  assert.deepStrictEqual(v, { screen: 'unconfigured', card: 'hidden', sign: 'Now Showing' });
+  assert.deepStrictEqual(v, { screen: 'unconfigured', sign: 'Now Showing' });
   assert.strictEqual(L.computeView({ state: 'setup' }, ctx()).screen, 'unconfigured');
 });
 
@@ -41,14 +40,14 @@ test('screen: intermission and now', function () {
   assert.strictEqual(L.computeView(status(), ctx()).screen, 'now');
 });
 
-test('a playing movie shows the cast, with no dimming', function () {
-  assert.deepStrictEqual(L.computeView(status(), ctx()), { screen: 'now', card: 'cast', sign: 'Now Showing' });
+test('a playing movie shows the Now Showing sign', function () {
+  assert.deepStrictEqual(L.computeView(status(), ctx()), { screen: 'now', sign: 'Now Showing' });
 });
 
 test('an idle status with a library poster shows it under a Coming Soon sign', function () {
   var s = status({ state: 'idle', player: null });
-  s.media = { type: 'movie', title: 'Heat', posterShape: 'portrait', cast: [] };
-  assert.deepStrictEqual(L.computeView(s, ctx()), { screen: 'now', card: 'hidden', sign: 'Coming Soon' });
+  s.media = { type: 'movie', title: 'Heat', posterShape: 'portrait' };
+  assert.deepStrictEqual(L.computeView(s, ctx()), { screen: 'now', sign: 'Coming Soon' });
 });
 
 test('the poster fits a measured box', function () {
@@ -62,21 +61,9 @@ test('the corner buttons hide after 10 seconds', function () {
   assert.strictEqual(L.CONTROLS_MS, 10000);
 });
 
-test('no cast hides the card', function () {
-  var s = status({ brightness: 'full' });
-  s.media = { type: 'movie', title: 'X', posterShape: 'portrait', cast: [] };
-  assert.strictEqual(L.computeView(s, ctx()).card, 'hidden');
-});
-
-test('music never shows the card', function () {
-  var s = status({ brightness: 'full' });
-  s.media = { type: 'track', title: 'Song', posterShape: 'square', cast: [] };
-  assert.strictEqual(L.computeView(s, ctx()).card, 'hidden');
-});
-
-test('intermission and idle hide the card', function () {
-  assert.deepStrictEqual(L.computeView(status({ state: 'intermission' }), ctx()), { screen: 'intermission', card: 'hidden', sign: 'Now Showing' });
-  assert.strictEqual(L.computeView(null, ctx()).card, 'hidden');
+test('intermission and idle screens', function () {
+  assert.deepStrictEqual(L.computeView(status({ state: 'intermission' }), ctx()), { screen: 'intermission', sign: 'Now Showing' });
+  assert.strictEqual(L.computeView(null, ctx()).screen, 'idle');
 });
 
 var SIZES = [[768, 1024], [1024, 768], [800, 1280], [1280, 800], [390, 844], [844, 390], [360, 800], [800, 360]];
@@ -96,7 +83,6 @@ test('the poster keeps a 2:3 shape and fits its box at every target size', funct
       assert.ok(lay.posterW <= 0.86 * w + 1 && lay.posterH <= 0.52 * h + 1, label);
     }
     assert.ok(lay.posterH >= 0.3 * h, label + ' poster is not tiny');
-    assert.ok(lay.castCount >= 3 && lay.castCount <= 8, label);
     assert.ok(lay.baseFont >= 15 && lay.baseFont <= 26, label);
   });
 });
@@ -106,11 +92,6 @@ test('square art stays square', function () {
     var lay = L.computeLayout(s[0], s[1], 'square');
     assert.strictEqual(lay.posterW, lay.posterH);
   });
-});
-
-test('phones show fewer headshots than tablets', function () {
-  assert.ok(L.computeLayout(390, 844, 'portrait').castCount < L.computeLayout(768, 1024, 'portrait').castCount);
-  assert.ok(L.computeLayout(360, 800, 'portrait').castCount < L.computeLayout(800, 1280, 'portrait').castCount);
 });
 
 test('tablets get larger text than phones', function () {
@@ -147,12 +128,6 @@ test('formatRuntime reads like a marquee', function () {
   assert.strictEqual(L.formatRuntime(120), '2h');
   assert.strictEqual(L.formatRuntime(48), '48m');
   assert.strictEqual(L.formatRuntime(0), '');
-});
-
-test('initials come from the first and last name', function () {
-  assert.strictEqual(L.initials('Sigourney Weaver'), 'SW');
-  assert.strictEqual(L.initials('Cher'), 'C');
-  assert.strictEqual(L.initials(''), '');
 });
 
 test('logic.js is ES5', function () {

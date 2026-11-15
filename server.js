@@ -36,7 +36,6 @@ var plex = null;            // null means setup mode
 var tracker = null;
 var plexWasOk = null;
 var savedPlayers = '';
-var castCache = {};         // metadata key -> cast list, or 'pending'
 var posterCache = {};       // metadata key -> other posters of the title, or 'pending'
 var library = [];           // up to 200 movies per library, for the idle screen
 var libraryAt = null;       // when the library was last asked for
@@ -46,24 +45,10 @@ function trim(cache, max) {
   if (keys.length > max) delete cache[keys[0]];
 }
 
-function castKey(session) {
+function titleKey(session) {
   if (session.type === 'movie') return session.ratingKey;
   if (session.type === 'episode') return session.showRatingKey;
   return null;
-}
-
-// One metadata request per title gives the full cast.
-function fetchDetails(client, session) {
-  var key = castKey(session);
-  if (!key || castCache[key]) return;
-  castCache[key] = 'pending';
-  trim(castCache, 50);
-  client.getJson('/library/metadata/' + encodeURIComponent(key)).then(function (json) {
-    if (client !== plex) return;
-    castCache[key] = parser.parseCast(json);
-  }).catch(function () {
-    delete castCache[key];
-  });
 }
 
 // Asks Plex for up to 200 movies per library, in random order. A new set comes every 6 hours.
@@ -84,7 +69,7 @@ function refreshLibrary() {
 var deps = {
   images: images,
   postersFor: function (session) {
-    var key = castKey(session);
+    var key = titleKey(session);
     var client = plex;
     if (!key || !client) return null;
     if (!posterCache[key]) {
@@ -104,10 +89,6 @@ var deps = {
       refreshLibrary();
     }
     return library;
-  },
-  castFor: function (session) {
-    var cast = castCache[castKey(session)];
-    return Array.isArray(cast) && cast.length ? cast : null;
   }
 };
 
@@ -137,7 +118,6 @@ function poll() {
     if (client !== plex) return;   // settings changed while this request was in flight
     var sessions = parser.parseSessions(json);
     tracker.update(sessions);
-    sessions.forEach(function (session) { fetchDetails(client, session); });
     savePlayers();
     logPlexState(true);
   }).catch(function (err) {
@@ -157,7 +137,7 @@ function usePlex(config) {
   plex = createPlexClient({ plexUrl: config.plexUrl, plexToken: config.plexToken });
   tracker = createTracker({ now: Date.now, pauseGraceMs: 10000, fullBrightMs: 180000 });
   plexWasOk = null;
-  castCache = {}; posterCache = {}; library = []; libraryAt = null;
+  posterCache = {}; library = []; libraryAt = null;
   try {
     tracker.loadPlayers(JSON.parse(fs.readFileSync(PLAYERS_FILE, 'utf8')));
   } catch (e) { /* no saved players yet */ }

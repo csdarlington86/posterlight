@@ -158,7 +158,7 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 
 .poster-area {
   position: relative;
-  /* Takes the space left after the sign, the titles, and the cast. app.js fits the poster inside. */
+  /* Takes the space left after the sign and the titles. app.js fits the poster inside. */
   -webkit-flex: 1 1 0%; flex: 1 1 0%; min-height: 0;
   display: -webkit-flex; display: flex;
   -webkit-justify-content: center; justify-content: center;
@@ -240,74 +240,19 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 .meta-item { display: inline-block; vertical-align: middle; margin: 0 0.35em; }
 .badge:empty, .meta-item:empty { display: none; }
 
-/* The cast strip. */
-.card {
-  position: relative;
-  -webkit-flex: none; flex: none;
-  height: 8.6em;
-  border-radius: 0.7em;
-  border: 1px solid rgba(255, 200, 87, 0.38);
-  background: #1E1915;
-  background: linear-gradient(180deg, rgba(246, 239, 226, 0.085) 0%, rgba(246, 239, 226, 0.035) 100%);
-  opacity: 0;
-  -webkit-transition: opacity 1.6s ease; transition: opacity 1.6s ease;
-}
-.card.is-shown { opacity: 1; }
-.card-layer {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  padding: 0.7em 0.9em;
-  opacity: 0; visibility: hidden;
-  -webkit-transition: opacity 1.6s ease; transition: opacity 1.6s ease;
-}
-.card-layer.is-shown { opacity: 1; visibility: visible; }
-
-.card-cast {
-  display: -webkit-flex; display: flex;
-  -webkit-justify-content: space-around; justify-content: space-around;
-  -webkit-align-items: center; align-items: center;
-}
-.cast-cell {
-  -webkit-flex: 1 1 0%; flex: 1 1 0%;
-  min-width: 0; padding: 0 0.2em; text-align: center;
-}
-.cast-photo {
-  position: relative;
-  width: 3.7em; height: 3.7em; margin: 0 auto 0.35em auto;
-  border-radius: 50%; overflow: hidden;
-  background: #2E2620; border: 0.1em solid #7A5C1E;
-}
-.cast-photo img {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  display: block; object-fit: cover; border-radius: 50%;
-  opacity: 0;
-  -webkit-transition: opacity 0.6s ease; transition: opacity 0.6s ease;
-}
-.cast-photo img.is-loaded { opacity: 1; }
-.cast-initials {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  line-height: 3.5em; text-align: center;
-  font-weight: 700; color: #FFC857; letter-spacing: 0.04em;
-}
-.cast-name, .cast-role {
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.cast-name { font-size: 0.74em; font-weight: 600; color: #F6EFE2; }
-.cast-role { font-size: 0.66em; color: #FFC857; opacity: 0.85; }
-
 /* ---------- landscape: poster left, info right ---------- */
 .is-landscape .screen-now { padding-left: 0; }
 .is-landscape .poster-area {
   position: absolute; top: 0; bottom: 0; left: 0; width: 47%;
   margin-top: 0;
 }
-.is-landscape .marquee, .is-landscape .titles, .is-landscape .card {
+.is-landscape .marquee, .is-landscape .titles {
   margin-left: 49%;
   -webkit-align-self: stretch; align-self: stretch;
   width: auto;
 }
 .is-landscape .marquee { max-width: none; }
 .is-landscape .titles { -webkit-flex: 1 1 0%; flex: 1 1 0%; min-height: 0; }
-.is-landscape .card { margin-bottom: 0; }
 
 /* ---------- signs: intermission and idle ---------- */
 .screen-idle, .screen-intermission {
