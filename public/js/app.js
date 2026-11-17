@@ -189,6 +189,56 @@
     return 'img/' + encodeURIComponent(id) + '?w=' + L.imageSize(cssW, dpr) + '&h=' + L.imageSize(cssH, dpr);
   }
 
+  // ---------- backdrop: the room takes its colour from the poster ----------
+  // A small copy of the poster is drawn into a canvas of only 36 x 54 pixels, and the canvas
+  // is stretched over the screen. Stretching so few pixels gives a soft wash of the poster's
+  // colours with no blur effect at all, so an old tablet has nothing extra to compute.
+  var backdropEl = byId('backdrop');
+  var backdropCanvas = byId('backdrop-canvas');
+  var backdropId = null;
+  var backdropTimer = null;
+
+  function paintBackdrop(img) {
+    var ctx = backdropCanvas.getContext && backdropCanvas.getContext('2d');
+    var iw = img.naturalWidth || img.width;
+    var ih = img.naturalHeight || img.height;
+    if (!ctx || !iw || !ih) return false;
+    var cw = backdropCanvas.width;
+    var ch = backdropCanvas.height;
+    // Fill the canvas from the middle of the picture, whatever its shape.
+    var scale = Math.max(cw / iw, ch / ih);
+    var sw = cw / scale;
+    var sh = ch / scale;
+    try {
+      ctx.drawImage(img, (iw - sw) / 2, (ih - sh) / 2, sw, sh, 0, 0, cw, ch);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+  function loadBackdrop(id) {
+    var img = new Image();
+    img.onload = function () {
+      if (backdropId !== id) return;
+      setClass(backdropEl, 'is-shown', paintBackdrop(img));
+    };
+    img.src = local ? local.imageUrl(id, 100, 150) : 'img/' + encodeURIComponent(id) + '?w=100&h=150';
+  }
+
+  function updateBackdrop(id) {
+    id = id || null;
+    if (id === backdropId) return;
+    var first = backdropId === null;
+    backdropId = id;
+    if (backdropTimer) { window.clearTimeout(backdropTimer); backdropTimer = null; }
+    setClass(backdropEl, 'is-shown', false);
+    if (!id) return;
+    // Let the old backdrop fade out before the picture changes.
+    if (first) loadBackdrop(id);
+    else backdropTimer = window.setTimeout(function () { backdropTimer = null; loadBackdrop(id); }, 1300);
+  }
+
   var posterTimer = null;
   function updatePoster(media) {
     var layout = state.layout;
@@ -265,6 +315,8 @@
     showScreen(view.screen);
     setText(el.marqueeText, view.sign);
     if ((view.screen === 'now' || view.screen === 'intermission') && status.media) updateMedia(status.media);
+    var onPoster = (view.screen === 'now' || view.screen === 'intermission') && status && status.media;
+    updateBackdrop(onPoster ? status.media.posterId : null);
 
 
     setClass(el.controls, 'is-shown', now - state.lastTapMs < L.CONTROLS_MS);

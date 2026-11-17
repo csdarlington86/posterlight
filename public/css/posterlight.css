@@ -2,7 +2,9 @@
    Rules of this file:
    - flexbox with margins, never "gap"; no aspect-ratio; no min()/max()/clamp()
    - animate only opacity and transform
-   - sizes are in em. app.js sets the base font size on #app for each screen size. */
+   - sizes are in em. app.js sets the base font size on #app for each screen size.
+   - no backdrop-filter, no filter, no conic-gradient: an iPad Air 1 cannot afford them or lacks them
+   Look: an art deco picture house. Brass, enamel, warm bulbs, with modern spacing and type. */
 
 @font-face {
   font-family: 'Limelight';
@@ -38,12 +40,37 @@ html, body {
 }
 body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: manipulation; }
 
+/* The room: a warm house light from above, a dark floor, and faint velvet curtain folds.
+   All of it is one static background, painted once. */
 .app {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   font-family: 'Inter', -apple-system, 'Helvetica Neue', Roboto, Arial, sans-serif;
   font-size: 18px; line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
   overflow: hidden;
-  background: #14110F;
+  background-color: #14110F;
+  background-image:
+    radial-gradient(ellipse at 50% -12%, rgba(255, 200, 87, 0.13) 0%, rgba(255, 200, 87, 0) 58%),
+    radial-gradient(ellipse at 50% 118%, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 62%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.13) 1.7em, rgba(0, 0, 0, 0) 3.4em);
+}
+
+/* The backdrop: the poster itself, drawn tiny and stretched, so each title colours the room.
+   A dark veil over it keeps the poster case and the text in front. */
+.backdrop {
+  position: absolute; top: -6%; left: -6%; width: 112%; height: 112%;
+  opacity: 0;
+  -webkit-transition: opacity 1.2s ease; transition: opacity 1.2s ease;
+  -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0);
+}
+.backdrop.is-shown { opacity: 1; }
+.backdrop canvas { display: block; width: 100%; height: 100%; opacity: 0.7; }
+.backdrop:after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    radial-gradient(ellipse at 50% 42%, rgba(20, 17, 15, 0.12) 0%, rgba(20, 17, 15, 0.8) 74%),
+    linear-gradient(180deg, rgba(20, 17, 15, 0.55) 0%, rgba(20, 17, 15, 0.2) 35%, rgba(20, 17, 15, 0.75) 100%);
 }
 
 .fader {
@@ -94,22 +121,29 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 .screen.is-leaving { visibility: visible; }
 
 /* ---------- bulbs ---------- */
-.bulbs { position: relative; height: 0.6em; margin: 0 0.3em; }
+.bulbs { position: relative; height: 0.6em; margin: 0 0.35em; }
 .bulb-row {
   position: absolute; top: 0; left: 0; right: 0; height: 100%;
   display: -webkit-flex; display: flex;
   -webkit-justify-content: space-between; justify-content: space-between;
   -webkit-align-items: center; align-items: center;
 }
+/* An unlit bulb: dull brass glass with a small highlight. */
 .bulb-row i {
-  display: block; width: 0.5em; height: 0.5em; border-radius: 50%;
-  background: #7A5C1E;
+  display: block; width: 0.46em; height: 0.46em; border-radius: 50%;
+  background: #6B4F18;
+  background: radial-gradient(circle at 36% 30%, #A8822E 0%, #6B4F18 55%, #40300F 100%);
   -webkit-flex: none; flex: none;
 }
 .bulb-row.lit i { background: transparent; }
-.bulb-row.lit i.on { background: #FFE9A8; box-shadow: 0 0 0.45em 0.08em rgba(255, 200, 87, 0.85); }
+/* A lit bulb: white-hot centre, amber edge, soft halo. */
+.bulb-row.lit i.on {
+  background: #FFE9A8;
+  background: radial-gradient(circle at 42% 38%, #FFFFFF 0%, #FFE9A8 38%, #FFC857 100%);
+  box-shadow: 0 0 0.5em 0.1em rgba(255, 200, 87, 0.8);
+}
 .bulb-row.lit {
-  opacity: 0.12;
+  opacity: 0.1;
   -webkit-animation: chase 3s linear infinite; animation: chase 3s linear infinite;
 }
 .bulb-row.lit.g1 { -webkit-animation-delay: -2s; animation-delay: -2s; }
@@ -117,16 +151,31 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 @-webkit-keyframes chase {
   0%   { opacity: 1; }
   30%  { opacity: 1; }
-  42%  { opacity: 0.12; }
-  88%  { opacity: 0.12; }
+  42%  { opacity: 0.1; }
+  88%  { opacity: 0.1; }
   100% { opacity: 1; }
 }
 @keyframes chase {
   0%   { opacity: 1; }
   30%  { opacity: 1; }
-  42%  { opacity: 0.12; }
-  88%  { opacity: 0.12; }
+  42%  { opacity: 0.1; }
+  88%  { opacity: 0.1; }
   100% { opacity: 1; }
+}
+
+/* ---------- enamel plaque: shared by the marquee and the signs ---------- */
+/* Dark enamel, a brass edge, and one fine amber line set in from the edge. */
+.marquee, .sign {
+  border: 1px solid #C8962F;
+  background: #1D1814;
+  background: linear-gradient(180deg, #2C231A 0%, #1B1612 52%, #120F0C 100%);
+  box-shadow:
+    inset 0 0 0 0.16em #14110F,
+    inset 0 0 0 0.25em rgba(255, 200, 87, 0.5),
+    inset 0 1.3em 1.4em -1.1em rgba(255, 233, 168, 0.12),
+    0 0 1.9em rgba(255, 200, 87, 0.17),
+    0 0.55em 1.3em rgba(0, 0, 0, 0.6);
+  text-align: center;
 }
 
 /* ---------- now showing ---------- */
@@ -138,22 +187,18 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 .marquee {
   -webkit-flex: none; flex: none;
   -webkit-align-self: center; align-self: center;
-  width: calc(100% - 2.8em); max-width: 22em;   /* leaves the corners free for the buttons */
-  padding: 0.45em 0.5em;
-  border: 0.12em solid #FFC857; border-radius: 0.7em;
-  background: #1D1814;
-  background: linear-gradient(180deg, #241D17 0%, #17130F 100%);
-  box-shadow: 0 0 1.4em rgba(255, 200, 87, 0.16), inset 0 0 1em rgba(0, 0, 0, 0.6);
-  text-align: center;
+  width: calc(100% - 3.3em); max-width: 22em;   /* leaves the corners free for the buttons */
+  padding: 0.55em 0.6em;
+  border-radius: 0.55em;
 }
 .marquee-text {
   font-family: 'Limelight', 'Copperplate', Georgia, serif;
   font-size: 1.9em; line-height: 1.15;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: #FFC857;
-  text-shadow: 0 0 0.35em rgba(255, 200, 87, 0.55);
+  letter-spacing: 0.11em; text-transform: uppercase;
+  color: #FFD271;
+  text-shadow: 0 0 0.1em rgba(255, 233, 168, 0.85), 0 0 0.5em rgba(255, 200, 87, 0.5), 0 0.05em 0 rgba(0, 0, 0, 0.55);
   white-space: nowrap;
-  padding: 0.12em 0 0.06em 0.1em;
+  padding: 0.12em 0 0.06em 0.11em;
 }
 
 .poster-area {
@@ -163,32 +208,55 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   display: -webkit-flex; display: flex;
   -webkit-justify-content: center; justify-content: center;
   -webkit-align-items: center; align-items: center;
-  margin-top: 0.9em;
+  margin-top: 1.25em;
 }
 .poster-glow {
   position: absolute; top: 50%; left: 50%;
   width: 10px; height: 10px;   /* app.js sets the real size */
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 200, 87, 0.26) 0%, rgba(255, 200, 87, 0.1) 40%, rgba(255, 200, 87, 0) 70%);
+  background: radial-gradient(ellipse at center, rgba(255, 200, 87, 0.24) 0%, rgba(255, 200, 87, 0.09) 42%, rgba(255, 200, 87, 0) 70%);
   pointer-events: none;
 }
+/* The poster case: a brass moulding with a light edge, and a picture light above it. */
 .frame {
   position: relative;
-  padding: 0.38em;
-  border-radius: 0.3em;
-  background: #2A2019;
-  background: linear-gradient(145deg, #4A3620 0%, #201812 45%, #3A2A1A 100%);
-  border: 1px solid #7A5C1E;
-  box-shadow: 0 0 0 1px #14110F, 0 0 1.6em rgba(255, 200, 87, 0.28), 0 0.7em 1.6em rgba(0, 0, 0, 0.7);
+  padding: 0.5em;
+  border-radius: 0.2em;
+  background: #3A2C16;
+  background: linear-gradient(135deg, #9A7630 0%, #4A3819 14%, #1F1810 48%, #3E2F17 84%, #8A6A2A 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 233, 168, 0.32),
+    0 0 0 1px #0B0908,
+    0 0 2.2em rgba(255, 200, 87, 0.2),
+    0 1.2em 2.4em rgba(0, 0, 0, 0.75);
+}
+.frame:before {
+  content: '';
+  position: absolute; top: -0.68em; left: 31%; width: 38%; height: 0.2em;
+  border-radius: 0.2em;
+  background: #C8962F;
+  background: linear-gradient(180deg, #F0D48A 0%, #C8962F 45%, #7A5C1E 100%);
+  box-shadow: 0 0.16em 0.7em rgba(255, 226, 150, 0.55);
 }
 .frame-inner {
   position: relative; overflow: hidden;
   width: 200px; height: 300px;   /* app.js sets the real size */
   background: #0E0C0A;
-  border-radius: 0.12em;
+  border-radius: 0.06em;
+  box-shadow: 0 0 0 1px #0B0908, 0 0 0 0.11em rgba(200, 150, 47, 0.65);
+}
+/* Glass over the poster: light falling from the lamp, and one faint diagonal reflection.
+   It is very light, so the poster keeps its true colours. */
+.frame-inner:after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, rgba(255, 233, 168, 0.1) 0%, rgba(255, 233, 168, 0) 30%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0.045) 45%, rgba(255, 255, 255, 0) 52%);
 }
 .poster {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
   display: block;
   object-fit: contain;   /* the poster is never cropped */
   opacity: 0;
@@ -211,34 +279,68 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   -webkit-align-items: center; align-items: center;
   -webkit-justify-content: center; justify-content: center;
   text-align: center;
-  padding: 0.3em 0.2em;
+  padding: 0.7em 0 0 0;
 }
-.titles-inner { width: 100%; }
+/* The title card: a dark glass panel with a fine brass edge. */
+.titles-inner {
+  width: 100%;
+  padding: 0.75em 1em 0.85em 1em;
+  border: 1px solid rgba(200, 150, 47, 0.42);
+  border-radius: 0.9em;
+  background: rgba(16, 13, 11, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255, 233, 168, 0.08), 0 0.5em 1.4em rgba(0, 0, 0, 0.45);
+}
+/* A deco rule above the title: two fine brass lines and a bead between them. */
+.titles-inner:before {
+  content: '';
+  display: block; width: 9em; height: 0.5em; margin: 0 auto 0.4em auto;
+  background-repeat: no-repeat;
+  background-position: center, center;
+  background-size: 0.5em 0.5em, 100% 1px;
+  background-image:
+    radial-gradient(circle at center, #FFC857 0, #FFC857 0.12em, rgba(255, 200, 87, 0) 0.15em),
+    linear-gradient(90deg, rgba(200, 150, 47, 0) 0%, #C8962F 36%, rgba(200, 150, 47, 0) 45%, rgba(200, 150, 47, 0) 55%, #C8962F 64%, rgba(200, 150, 47, 0) 100%);
+}
 .title {
   margin: 0;
   font-family: 'Limelight', Georgia, serif; font-weight: 400;
-  font-size: 1.85em; line-height: 1.12;
+  font-size: 1.9em; line-height: 1.12; letter-spacing: 0.01em;
   color: #F6EFE2;
+  text-shadow: 0 0.05em 0.35em rgba(0, 0, 0, 0.7);
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
   overflow: hidden;
 }
-.title.is-long { font-size: 1.4em; }
-.title.is-very-long { font-size: 1.15em; }
+.title.is-long { font-size: 1.45em; }
+.title.is-very-long { font-size: 1.18em; }
 .subtitle {
-  margin: 0.25em 0 0 0;
-  font-size: 0.95em; font-weight: 600; color: #FFC857;
+  margin: 0.45em 0 0 0;
+  font-size: 0.76em; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #FFC857;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .subtitle:empty { display: none; }
-.meta { margin: 0.45em 0 0 0; font-size: 0.9em; color: #C9BFAE; white-space: nowrap; }
+.meta {
+  margin: 0.6em 0 0 0;
+  font-size: 0.86em; font-weight: 600; letter-spacing: 0.04em; color: #C9BFAE; white-space: nowrap;
+  -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum';
+}
+/* The rating: a solid amber ticket stub. */
 .badge {
   display: inline-block; vertical-align: middle;
-  padding: 0.08em 0.5em; margin: 0 0.35em;
-  border: 0.1em solid #F6EFE2; border-radius: 0.3em;
-  font-weight: 700; font-size: 0.85em; letter-spacing: 0.04em; color: #F6EFE2;
+  padding: 0.14em 0.55em; margin: 0 0.15em;
+  border-radius: 0.28em;
+  background: #FFC857;
+  font-weight: 700; font-size: 0.86em; letter-spacing: 0.06em; color: #14110F;
 }
-.meta-item { display: inline-block; vertical-align: middle; margin: 0 0.35em; }
+.meta-item { display: inline-block; vertical-align: middle; margin: 0 0.15em; }
 .badge:empty, .meta-item:empty { display: none; }
+/* A small amber bead between the items. */
+.badge:not(:empty) ~ .meta-item:before,
+.meta-item:not(:empty) ~ .meta-item:before {
+  content: '';
+  display: inline-block; vertical-align: middle;
+  width: 0.26em; height: 0.26em; margin: 0 0.6em 0.12em 0.3em;
+  border-radius: 50%; background: #C8962F;
+}
 
 /* ---------- landscape: poster left, info right ---------- */
 .is-landscape .screen-now { padding-left: 0; }
@@ -252,7 +354,15 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   width: auto;
 }
 .is-landscape .marquee { max-width: none; }
-.is-landscape .titles { -webkit-flex: 1 1 0%; flex: 1 1 0%; min-height: 0; }
+.is-landscape .titles { -webkit-flex: 1 1 0%; flex: 1 1 0%; min-height: 0; padding: 0.8em 0 0 0; }
+.is-landscape .titles-inner { padding: 1.3em 1.2em 1.4em 1.2em; }
+/* The right column has room, so the title speaks up. */
+.is-landscape .title { font-size: 2.45em; }
+.is-landscape .title.is-long { font-size: 1.85em; }
+.is-landscape .title.is-very-long { font-size: 1.4em; }
+.is-landscape .titles-inner:before { width: 11em; margin-bottom: 0.7em; }
+.is-landscape .subtitle { margin-top: 0.7em; }
+.is-landscape .meta { margin-top: 0.9em; }
 
 /* ---------- signs: intermission and idle ---------- */
 .screen-idle, .screen-intermission {
@@ -262,38 +372,54 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   -webkit-justify-content: center; justify-content: center;
   text-align: center;
 }
+/* A pool of light behind the intermission sign. */
+.screen-intermission:before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  width: 34em; height: 34em; margin: -17em 0 0 -17em;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255, 200, 87, 0.13) 0%, rgba(255, 200, 87, 0.04) 40%, rgba(255, 200, 87, 0) 68%);
+  pointer-events: none;
+}
 .sign {
+  position: relative;
   width: 100%; max-width: 24em;
-  padding: 0.6em 0.6em;
-  border: 0.14em solid #FFC857; border-radius: 0.9em;
-  background: #1D1814;
-  background: linear-gradient(180deg, #2A1F17 0%, #17130F 100%);
-  box-shadow: 0 0 0 0.3em #14110F, 0 0 0 0.38em #7A5C1E, 0 0 2.2em rgba(255, 200, 87, 0.2);
+  padding: 0.7em 0.7em;
+  border-radius: 0.7em;
 }
 .sign-text {
   font-family: 'Limelight', Georgia, serif;
-  font-size: 2.3em; line-height: 1.15; letter-spacing: 0.06em; text-transform: uppercase;
-  color: #FFC857; text-shadow: 0 0 0.35em rgba(255, 200, 87, 0.5);
-  padding: 0.15em 0 0.1em 0;
+  font-size: 2.3em; line-height: 1.15; letter-spacing: 0.07em; text-transform: uppercase;
+  color: #FFD271;
+  text-shadow: 0 0 0.1em rgba(255, 233, 168, 0.85), 0 0 0.5em rgba(255, 200, 87, 0.5), 0 0.05em 0 rgba(0, 0, 0, 0.55);
+  padding: 0.15em 0 0.1em 0.07em;
 }
-.sign-stars { margin-top: 0.5em; color: #FFE9A8; letter-spacing: 0.6em; font-size: 0.8em; padding-left: 0.6em; }
+.sign-stars { margin-top: 0.6em; color: #FFC857; letter-spacing: 0.7em; font-size: 0.7em; padding-left: 0.7em; }
 .sign-sub {
-  margin: 0.1em 0 0.7em 0;
-  font-size: 0.82em; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #F6EFE2;
+  margin: 0.15em 0 0.8em 0;
+  font-size: 0.74em; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: #F6EFE2;
+  padding-left: 0.24em;
 }
 .intermission-title {
-  margin: 1.6em 0 0 0; max-width: 90%;
+  position: relative;
+  margin: 1.7em 0 0 0; max-width: 90%;
   font-family: 'Limelight', Georgia, serif; font-size: 1.2em; color: #C9BFAE;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.sign-idle { border-color: #7A5C1E; box-shadow: none; background: transparent; max-width: 22em; }
+/* The idle sign is the same plaque with the power off. */
+.sign-idle {
+  max-width: 22em;
+  border-color: #5A4416;
+  background: transparent;
+  box-shadow: inset 0 0 0 0.16em #14110F, inset 0 0 0 0.25em rgba(122, 92, 30, 0.45);
+}
 .sign-idle .sign-text {
-  font-size: 1.55em; color: #7A5C1E; text-shadow: none; padding: 0.35em 0 0.3em 0;
+  font-size: 1.55em; color: #8A6A2A; text-shadow: none; padding: 0.35em 0 0.3em 0.07em;
 }
 .idle-brand {
   margin: 1.6em 0 0 0;
-  font-family: 'Limelight', Georgia, serif; font-size: 0.95em; letter-spacing: 0.16em; color: #7A5C1E;
+  font-family: 'Limelight', Georgia, serif; font-size: 0.95em; letter-spacing: 0.18em; color: #7A5C1E;
 }
 
 /* ---------- setup ---------- */
@@ -301,32 +427,64 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 .setup-inner {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 2em 1.4em; text-align: center;
+  padding: 2.2em 1.4em 2em 1.4em; text-align: center;
 }
-.setup-logo { display: block; width: 6.5em; height: 6.5em; margin: 0 auto 0.5em auto; }
+.setup-logo { display: block; width: 6em; height: 6em; margin: 0 auto 0.6em auto; }
 .setup-name {
   margin: 0; font-family: 'Limelight', Georgia, serif; font-weight: 400;
-  font-size: 2.3em; color: #FFC857; letter-spacing: 0.04em;
+  font-size: 2.4em; line-height: 1.1; color: #FFD271; letter-spacing: 0.04em;
+  text-shadow: 0 0 0.5em rgba(255, 200, 87, 0.35);
 }
-.setup-tagline { margin: 0.1em 0 1.5em 0; color: #F6EFE2; opacity: 0.8; }
-.setup-question { margin: 0 0 0.9em 0; font-weight: 600; font-size: 1.05em; }
+.setup-tagline {
+  margin: 0.5em 0 0 0;
+  font-size: 0.74em; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #C9BFAE;
+}
+/* The same deco rule as on the poster screen. */
+.setup-tagline:after {
+  content: '';
+  display: block; width: 9em; height: 0.5em; margin: 1.5em auto 1.6em auto;
+  background-repeat: no-repeat;
+  background-position: center, center;
+  background-size: 0.5em 0.5em, 100% 1px;
+  background-image:
+    radial-gradient(circle at center, #FFC857 0, #FFC857 0.12em, rgba(255, 200, 87, 0) 0.15em),
+    linear-gradient(90deg, rgba(200, 150, 47, 0) 0%, #C8962F 36%, rgba(200, 150, 47, 0) 45%, rgba(200, 150, 47, 0) 55%, #C8962F 64%, rgba(200, 150, 47, 0) 100%);
+}
+.setup-question { margin: 0 0 1em 0; font-weight: 600; font-size: 1.08em; line-height: 1.3; }
 .player-list { max-width: 24em; margin: 0 auto; }
 .player-button {
-  display: block; width: 100%; margin: 0 0 0.7em 0; padding: 0.8em 1em;
+  position: relative;
+  display: block; width: 100%; margin: 0 0 0.7em 0; padding: 0.85em 2.6em 0.85em 1.1em;
   font: inherit; font-weight: 600; font-size: 1.05em; text-align: left; color: #F6EFE2;
-  background: #241D17; border: 1px solid #7A5C1E; border-radius: 0.6em;
+  background: #241D17;
+  background: linear-gradient(180deg, #2B2219 0%, #1E1814 100%);
+  border: 1px solid #5A4416; border-radius: 0.7em;
+  box-shadow: inset 0 1px 0 rgba(255, 233, 168, 0.07), 0 0.3em 0.9em rgba(0, 0, 0, 0.35);
   -webkit-appearance: none; appearance: none;
+  -webkit-transition: -webkit-transform 0.12s ease; transition: transform 0.12s ease;
 }
-a.player-button { text-decoration: none; text-align: center; }
+/* A small arrow on the right of each choice. */
+.player-button:after {
+  content: '';
+  position: absolute; top: 50%; right: 1.1em;
+  width: 0.5em; height: 0.5em; margin-top: -0.3em;
+  border-top: 0.13em solid #C8962F; border-right: 0.13em solid #C8962F;
+  -webkit-transform: rotate(45deg); transform: rotate(45deg);
+}
+.player-button:active { -webkit-transform: scale(0.985); transform: scale(0.985); background: #33281C; }
+.player-button.is-any { border-color: #C8962F; color: #FFD271; }
+/* A link styled as the main button, for example "Open setup". */
+a.player-button { padding: 0.85em 1.1em; text-decoration: none; text-align: center; }
+a.player-button:after { display: none; }
+a.player-button.is-any { background: #FFC857; border-color: #FFC857; color: #14110F; box-shadow: 0 0.3em 1.2em rgba(255, 200, 87, 0.22); }
+a.player-button.is-any:active { background: #F0B840; }
 .setup-link { color: #FFC857; }
-.player-button:active { background: #3A2A1A; }
-.player-button.is-any { border-color: #FFC857; color: #FFC857; }
-.player-button small { display: block; margin-top: 0.15em; font-weight: 400; font-size: 0.75em; color: #C9BFAE; }
+.player-button small { display: block; margin-top: 0.2em; font-weight: 400; font-size: 0.75em; color: #C9BFAE; }
 .player-button .live {
-  display: inline-block; width: 0.55em; height: 0.55em; margin-right: 0.5em; border-radius: 50%;
-  background: #FFE9A8; box-shadow: 0 0 0.4em rgba(255, 200, 87, 0.9); vertical-align: middle;
+  display: inline-block; width: 0.55em; height: 0.55em; margin-right: 0.55em; border-radius: 50%;
+  background: #FFE9A8; box-shadow: 0 0 0.45em rgba(255, 200, 87, 0.95); vertical-align: middle;
 }
-.setup-hint { max-width: 24em; margin: 0.8em auto 1em auto; font-size: 0.85em; color: #C9BFAE; }
+.setup-hint { max-width: 24em; margin: 0.9em auto 1em auto; font-size: 0.85em; line-height: 1.45; color: #C9BFAE; }
 
 /* ---------- corner buttons, offline dot ---------- */
 /* Corner buttons: back to the player list, and full screen. They hide 10 seconds after a tap. */
@@ -337,16 +495,19 @@ a.player-button { text-decoration: none; text-align: center; }
 }
 .controls.is-shown { opacity: 1; visibility: visible; }
 .ctl {
-  display: block; width: 1.8em; height: 1.8em; margin: 0 0 0.3em 0; padding: 0.35em;
-  font: inherit; color: #C9BFAE;
-  background: rgba(20, 17, 15, 0.8); border: 1px solid #7A5C1E; border-radius: 50%;
+  display: block; width: 2.1em; height: 2.1em; margin: 0 0 0.35em 0; padding: 0.48em;
+  font: inherit; color: #F6EFE2;
+  background: rgba(29, 24, 20, 0.88); border: 1px solid rgba(200, 150, 47, 0.65); border-radius: 50%;
+  box-shadow: 0 0.2em 0.6em rgba(0, 0, 0, 0.5);
   -webkit-appearance: none; appearance: none;
+  -webkit-transition: -webkit-transform 0.12s ease; transition: transform 0.12s ease;
 }
+.ctl:active { -webkit-transform: scale(0.94); transform: scale(0.94); }
 .ctl svg {
   display: block; width: 100%; height: 100%;
-  fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
 }
-.is-landscape .ctl { display: inline-block; vertical-align: top; margin: 0 0.3em 0 0; }
+.is-landscape .ctl { display: inline-block; vertical-align: top; margin: 0 0.35em 0 0; }
 @supports (padding: env(safe-area-inset-top)) {
   .controls { top: calc(0.4em + env(safe-area-inset-top)); left: calc(0.4em + env(safe-area-inset-left)); }
 }
@@ -358,3 +519,16 @@ a.player-button { text-decoration: none; text-align: center; }
   -webkit-transition: opacity 1s ease; transition: opacity 1s ease;
 }
 .offline.is-shown { opacity: 0.9; }
+
+/* ---------- narrow phones ---------- */
+/* The sign text must fit on one line on a 360 px wide screen. */
+@media (max-width: 380px) and (orientation: portrait) {
+  .marquee-text { font-size: 1.7em; letter-spacing: 0.09em; }
+}
+
+/* ---------- people who ask their device for less motion ---------- */
+/* The bulbs hold a steady glow and the stage stops drifting. */
+@media (prefers-reduced-motion: reduce) {
+  .bulb-row.lit { -webkit-animation: none; animation: none; opacity: 0.75; }
+  .stage { -webkit-animation: none; animation: none; }
+}

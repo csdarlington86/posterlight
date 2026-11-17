@@ -20,10 +20,15 @@
 <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<!-- Fetch the two fonts the first screen needs right away, so the sign does not change shape after it appears. -->
+<link rel="preload" href="fonts/limelight-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/posterlight.css">
 </head>
 <body>
 <div id="app" class="app is-portrait">
+  <!-- The room takes its colour from the poster: a tiny copy of the art, stretched soft across the screen. -->
+  <div id="backdrop" class="backdrop" aria-hidden="true"><canvas id="backdrop-canvas" width="36" height="54"></canvas></div>
   <div id="fader" class="fader">
     <div id="stage" class="stage">
 
