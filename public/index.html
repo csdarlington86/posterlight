@@ -69,27 +69,28 @@
 
       <!-- Now showing -->
       <section id="screen-now" class="screen screen-now">
-        <div class="marquee">
-          <div class="bulbs" data-bulbs="chase"></div>
-          <div class="marquee-text" id="marquee-text">Now Showing</div>
-          <div class="bulbs" data-bulbs="chase"></div>
-        </div>
         <div class="poster-area" id="poster-area">
           <div class="poster-glow" id="poster-glow"></div>
           <div class="frame" id="frame">
+            <!-- In portrait the sign sits over the frame and the title over the poster. app.js moves both beside the poster in landscape. -->
+            <div class="marquee" id="marquee">
+              <div class="bulbs" data-bulbs="chase"></div>
+              <div class="marquee-text" id="marquee-text">Now Showing</div>
+              <div class="bulbs" data-bulbs="chase"></div>
+            </div>
             <div class="frame-inner" id="frame-inner">
               <div class="poster-fallback" id="poster-fallback"></div>
               <img id="poster" class="poster" alt="">
+              <div class="titles" id="titles">
+                <div class="titles-inner">
+                  <h1 id="title" class="title"></h1>
+                  <p id="subtitle" class="subtitle"></p>
+                  <p class="meta">
+                    <span id="rating" class="badge"></span><span id="runtime" class="meta-item"></span><span id="year" class="meta-item"></span>
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="titles">
-          <div class="titles-inner">
-            <h1 id="title" class="title"></h1>
-            <p id="subtitle" class="subtitle"></p>
-            <p class="meta">
-              <span id="rating" class="badge"></span><span id="runtime" class="meta-item"></span><span id="year" class="meta-item"></span>
-            </p>
           </div>
         </div>
       </section>

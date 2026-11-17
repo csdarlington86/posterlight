@@ -23,12 +23,13 @@
   }
 
   // Sizes the poster so it always keeps its shape and is never cropped.
-  // The box is the free space measured on the page. Without it, a share of the screen is used.
+  // The box is the free space measured on the page. Without it, almost the whole screen is used:
+  // the poster is the star, and the sign and title sit on or beside it.
   function computeLayout(w, h, posterShape, box) {
     var landscape = w > h;
     var ratio = posterShape === 'square' ? 1 : 2 / 3;   // width / height
-    var boxW = box ? box.w : (landscape ? 0.42 * w : 0.86 * w);
-    var boxH = box ? box.h : (landscape ? 0.84 * h : 0.52 * h);
+    var boxW = box ? box.w : (landscape ? 0.6 * w : 0.96 * w);
+    var boxH = box ? box.h : (landscape ? 0.96 * h : 0.94 * h);
     var posterH = Math.max(1, Math.floor(Math.min(boxH, boxW / ratio)));
     if (ratio !== 1) posterH = Math.max(3, posterH - (posterH % 3));  // keeps 2:3 exact in whole pixels
     var posterW = Math.max(1, Math.round(posterH * ratio));

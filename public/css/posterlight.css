@@ -64,13 +64,13 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0);
 }
 .backdrop.is-shown { opacity: 1; }
-.backdrop canvas { display: block; width: 100%; height: 100%; opacity: 0.7; }
+.backdrop canvas { display: block; width: 100%; height: 100%; opacity: 0.42; }
 .backdrop:after {
   content: '';
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   background-image:
-    radial-gradient(ellipse at 50% 42%, rgba(20, 17, 15, 0.12) 0%, rgba(20, 17, 15, 0.8) 74%),
-    linear-gradient(180deg, rgba(20, 17, 15, 0.55) 0%, rgba(20, 17, 15, 0.2) 35%, rgba(20, 17, 15, 0.75) 100%);
+    radial-gradient(ellipse at 50% 42%, rgba(20, 17, 15, 0.4) 0%, rgba(20, 17, 15, 0.9) 74%),
+    linear-gradient(180deg, rgba(20, 17, 15, 0.6) 0%, rgba(20, 17, 15, 0.4) 35%, rgba(20, 17, 15, 0.85) 100%);
 }
 
 .fader {
@@ -83,16 +83,16 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 /* The whole stage drifts a few pixels, very slowly, so nothing burns into the panel. */
 .stage {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  padding: 1.1em;
+  padding: 0.5em;
   -webkit-animation: drift 240s linear infinite; animation: drift 240s linear infinite;
   -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0);
 }
 @supports (padding: env(safe-area-inset-top)) {
   .stage {
-    padding-top: calc(1.1em + env(safe-area-inset-top));
-    padding-right: calc(1.1em + env(safe-area-inset-right));
-    padding-bottom: calc(1.1em + env(safe-area-inset-bottom));
-    padding-left: calc(1.1em + env(safe-area-inset-left));
+    padding-top: calc(0.5em + env(safe-area-inset-top));
+    padding-right: calc(0.5em + env(safe-area-inset-right));
+    padding-bottom: calc(0.5em + env(safe-area-inset-bottom));
+    padding-left: calc(0.5em + env(safe-area-inset-left));
   }
 }
 @-webkit-keyframes drift {
@@ -186,19 +186,21 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 
 .marquee {
   -webkit-flex: none; flex: none;
-  -webkit-align-self: center; align-self: center;
-  width: calc(100% - 3.3em); max-width: 22em;   /* leaves the corners free for the buttons */
-  padding: 0.55em 0.6em;
-  border-radius: 0.55em;
+  position: relative;
+  font-size: 0.9em;   /* a small plaque, not a banner */
+  margin: 0 0 1em 0;
+  padding: 0.3em 0.5em;
+  border-radius: 0.5em;
 }
+.marquee .bulbs { height: 0.5em; margin: 0 0.2em; }
 .marquee-text {
   font-family: 'Limelight', 'Copperplate', Georgia, serif;
-  font-size: 1.9em; line-height: 1.15;
+  font-size: 1.3em; line-height: 1.1;
   letter-spacing: 0.11em; text-transform: uppercase;
   color: #FFD271;
   text-shadow: 0 0 0.1em rgba(255, 233, 168, 0.85), 0 0 0.5em rgba(255, 200, 87, 0.5), 0 0.05em 0 rgba(0, 0, 0, 0.55);
   white-space: nowrap;
-  padding: 0.12em 0 0.06em 0.11em;
+  padding: 0.1em 0.2em 0.05em 0.31em;
 }
 
 .poster-area {
@@ -208,7 +210,8 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   display: -webkit-flex; display: flex;
   -webkit-justify-content: center; justify-content: center;
   -webkit-align-items: center; align-items: center;
-  margin-top: 1.25em;
+  margin-top: 0;
+  padding-top: 1.2em;   /* portrait: room for the sign that hangs over the frame */
 }
 .poster-glow {
   position: absolute; top: 50%; left: 50%;
@@ -217,10 +220,10 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   background: radial-gradient(ellipse at center, rgba(255, 200, 87, 0.24) 0%, rgba(255, 200, 87, 0.09) 42%, rgba(255, 200, 87, 0) 70%);
   pointer-events: none;
 }
-/* The poster case: a brass moulding with a light edge, and a picture light above it. */
+/* The poster case: a thin brass moulding. */
 .frame {
   position: relative;
-  padding: 0.5em;
+  padding: 0.28em;
   border-radius: 0.2em;
   background: #3A2C16;
   background: linear-gradient(135deg, #9A7630 0%, #4A3819 14%, #1F1810 48%, #3E2F17 84%, #8A6A2A 100%);
@@ -229,14 +232,6 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
     0 0 0 1px #0B0908,
     0 0 2.2em rgba(255, 200, 87, 0.2),
     0 1.2em 2.4em rgba(0, 0, 0, 0.75);
-}
-.frame:before {
-  content: '';
-  position: absolute; top: -0.68em; left: 31%; width: 38%; height: 0.2em;
-  border-radius: 0.2em;
-  background: #C8962F;
-  background: linear-gradient(180deg, #F0D48A 0%, #C8962F 45%, #7A5C1E 100%);
-  box-shadow: 0 0.16em 0.7em rgba(255, 226, 150, 0.55);
 }
 .frame-inner {
   position: relative; overflow: hidden;
@@ -272,19 +267,16 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   font-family: 'Limelight', Georgia, serif; font-size: 1.3em; color: #7A5C1E;
 }
 
+/* The title: a dark glass card. In portrait it has no box of its own: see "portrait" below. */
 .titles {
   -webkit-flex: none; flex: none;
   overflow: hidden;
-  display: -webkit-flex; display: flex;
-  -webkit-align-items: center; align-items: center;
-  -webkit-justify-content: center; justify-content: center;
   text-align: center;
-  padding: 0.7em 0 0 0;
+  width: 100%; max-width: 24em;
 }
-/* The title card: a dark glass panel with a fine brass edge. */
 .titles-inner {
   width: 100%;
-  padding: 0.75em 1em 0.85em 1em;
+  padding: 1em 1.2em 1.1em 1.2em;
   border: 1px solid rgba(200, 150, 47, 0.42);
   border-radius: 0.9em;
   background: rgba(16, 13, 11, 0.62);
@@ -293,7 +285,7 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
 /* A deco rule above the title: two fine brass lines and a bead between them. */
 .titles-inner:before {
   content: '';
-  display: block; width: 9em; height: 0.5em; margin: 0 auto 0.4em auto;
+  display: block; width: 9em; height: 0.5em; margin: 0 auto 0.5em auto;
   background-repeat: no-repeat;
   background-position: center, center;
   background-size: 0.5em 0.5em, 100% 1px;
@@ -307,19 +299,19 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   font-size: 1.9em; line-height: 1.12; letter-spacing: 0.01em;
   color: #F6EFE2;
   text-shadow: 0 0.05em 0.35em rgba(0, 0, 0, 0.7);
-  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
   overflow: hidden;
 }
-.title.is-long { font-size: 1.45em; }
-.title.is-very-long { font-size: 1.18em; }
+.title.is-long { font-size: 1.5em; }
+.title.is-very-long { font-size: 1.2em; }
 .subtitle {
-  margin: 0.45em 0 0 0;
+  margin: 0.5em 0 0 0;
   font-size: 0.76em; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #FFC857;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .subtitle:empty { display: none; }
 .meta {
-  margin: 0.6em 0 0 0;
+  margin: 0.7em 0 0 0;
   font-size: 0.86em; font-weight: 600; letter-spacing: 0.04em; color: #C9BFAE; white-space: nowrap;
   -webkit-font-feature-settings: 'tnum'; font-feature-settings: 'tnum';
 }
@@ -342,27 +334,54 @@ body { position: fixed; top: 0; left: 0; right: 0; bottom: 0; touch-action: mani
   border-radius: 50%; background: #C8962F;
 }
 
-/* ---------- landscape: poster left, info right ---------- */
-.is-landscape .screen-now { padding-left: 0; }
+/* ---------- portrait: the poster fills the screen ---------- */
+/* Narrow margins at the sides: on a phone the width decides how big the poster can be. */
+.is-portrait .stage { padding-left: 0.25em; padding-right: 0.25em; }
+@supports (padding: env(safe-area-inset-top)) {
+  .is-portrait .stage {
+    padding-left: calc(0.25em + env(safe-area-inset-left));
+    padding-right: calc(0.25em + env(safe-area-inset-right));
+  }
+}
+/* The sign hangs over the top edge of the frame. */
+.is-portrait .marquee {
+  position: absolute; top: -1.3em; left: 50%; z-index: 4;
+  margin: 0;
+  -webkit-transform: translate3d(-50%, 0, 0); transform: translate3d(-50%, 0, 0);
+}
+/* The title lies over the foot of the poster, on a dark fade. It takes no space of its own. */
+.is-portrait .titles {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+  max-width: none; overflow: visible;
+  padding: 3.8em 0.7em 0.6em 0.7em;
+  background: rgba(10, 8, 6, 0.9);
+  background: linear-gradient(0deg, rgba(10, 8, 6, 0.94) 0%, rgba(10, 8, 6, 0.86) 48%, rgba(10, 8, 6, 0) 100%);
+}
+.is-portrait .titles-inner {
+  padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+}
+.is-portrait .titles-inner:before { display: none; }
+.is-portrait .title {
+  display: block; white-space: nowrap; text-overflow: ellipsis;
+  font-size: 1.4em; line-height: 1.15;   /* app.js shrinks it until it fits */
+}
+.is-portrait .subtitle { margin-top: 0.15em; font-size: 0.7em; }
+.is-portrait .meta { margin-top: 0.3em; font-size: 0.8em; }
+
+/* ---------- landscape: poster at full height, a narrow column beside it ---------- */
+.is-landscape .screen-now {
+  -webkit-justify-content: center; justify-content: center;
+  -webkit-align-items: center; align-items: center;
+}
 .is-landscape .poster-area {
-  position: absolute; top: 0; bottom: 0; left: 0; width: 47%;
-  margin-top: 0;
+  position: absolute; top: 0.5em; bottom: 0.5em; left: 0.5em; width: 60%;
+  padding-top: 0;
 }
-.is-landscape .marquee, .is-landscape .titles {
-  margin-left: 49%;
-  -webkit-align-self: stretch; align-self: stretch;
-  width: auto;
-}
-.is-landscape .marquee { max-width: none; }
-.is-landscape .titles { -webkit-flex: 1 1 0%; flex: 1 1 0%; min-height: 0; padding: 0.8em 0 0 0; }
-.is-landscape .titles-inner { padding: 1.3em 1.2em 1.4em 1.2em; }
-/* The right column has room, so the title speaks up. */
-.is-landscape .title { font-size: 2.45em; }
-.is-landscape .title.is-long { font-size: 1.85em; }
-.is-landscape .title.is-very-long { font-size: 1.4em; }
-.is-landscape .titles-inner:before { width: 11em; margin-bottom: 0.7em; }
-.is-landscape .subtitle { margin-top: 0.7em; }
-.is-landscape .meta { margin-top: 0.9em; }
+.is-landscape .marquee { margin-bottom: 1.1em; }
+.is-landscape .title { font-size: 1.9em; }
+.is-landscape .title.is-long { font-size: 1.5em; }
+.is-landscape .title.is-very-long { font-size: 1.2em; }
+.is-landscape .titles-inner:before { width: 8em; }
 
 /* ---------- signs: intermission and idle ---------- */
 .screen-idle, .screen-intermission {
@@ -507,7 +526,8 @@ a.player-button.is-any:active { background: #F0B840; }
   display: block; width: 100%; height: 100%;
   fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
 }
-.is-landscape .ctl { display: inline-block; vertical-align: top; margin: 0 0.35em 0 0; }
+.is-landscape .controls { top: auto; left: auto; right: 0.5em; bottom: 0.5em; }
+.is-landscape .ctl { display: inline-block; vertical-align: top; margin: 0 0 0 0.35em; }
 @supports (padding: env(safe-area-inset-top)) {
   .controls { top: calc(0.4em + env(safe-area-inset-top)); left: calc(0.4em + env(safe-area-inset-left)); }
 }
@@ -523,7 +543,7 @@ a.player-button.is-any:active { background: #F0B840; }
 /* ---------- narrow phones ---------- */
 /* The sign text must fit on one line on a 360 px wide screen. */
 @media (max-width: 380px) and (orientation: portrait) {
-  .marquee-text { font-size: 1.7em; letter-spacing: 0.09em; }
+  .marquee-text { letter-spacing: 0.08em; }
 }
 
 /* ---------- people who ask their device for less motion ---------- */

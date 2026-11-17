@@ -78,11 +78,12 @@ test('the poster keeps a 2:3 shape and fits its box at every target size', funct
     assert.strictEqual(lay.posterW, Math.round(lay.posterW), label);
     assert.strictEqual(lay.posterH, Math.round(lay.posterH), label);
     if (w > h) {
-      assert.ok(lay.posterW <= 0.42 * w + 1 && lay.posterH <= 0.84 * h + 1, label);
+      assert.ok(lay.posterW <= 0.6 * w + 1 && lay.posterH <= 0.96 * h + 1, label);
+      assert.ok(lay.posterH >= 0.9 * h - 3 || lay.posterW >= 0.6 * w - 3, label + ' landscape poster is the star');
     } else {
-      assert.ok(lay.posterW <= 0.86 * w + 1 && lay.posterH <= 0.52 * h + 1, label);
+      assert.ok(lay.posterW <= 0.96 * w + 1 && lay.posterH <= 0.94 * h + 1, label);
+      assert.ok(lay.posterH >= 0.8 * h - 3 || lay.posterW >= 0.96 * w - 3, label + ' portrait poster is the star');
     }
-    assert.ok(lay.posterH >= 0.3 * h, label + ' poster is not tiny');
     assert.ok(lay.baseFont >= 15 && lay.baseFont <= 26, label);
   });
 });

@@ -16,7 +16,7 @@
   var el = {
     app: byId('app'), fader: byId('fader'), gear: byId('gear'), controls: byId('controls'), fullscreen: byId('fullscreen'), offline: byId('offline'),
     playerList: byId('player-list'), setupHint: byId('setup-hint'),
-    posterArea: byId('poster-area'), frame: byId('frame'), frameInner: byId('frame-inner'), glow: byId('poster-glow'), poster: byId('poster'), posterFallback: byId('poster-fallback'),
+    screenNow: byId('screen-now'), marquee: byId('marquee'), titles: byId('titles'), posterArea: byId('poster-area'), frame: byId('frame'), frameInner: byId('frame-inner'), glow: byId('poster-glow'), poster: byId('poster'), posterFallback: byId('poster-fallback'),
     marqueeText: byId('marquee-text'), title: byId('title'), subtitle: byId('subtitle'), rating: byId('rating'), runtime: byId('runtime'), year: byId('year'),
     intermissionTitle: byId('intermission-title')
   };
@@ -135,9 +135,69 @@
     el.glow.style.height = glowH + 'px';
     el.glow.style.marginLeft = (-glowW / 2) + 'px';
     el.glow.style.marginTop = (-glowH / 2) + 'px';
+    fitColumn(layout);
     buildBulbs();
+    fitTitle();
     state.posterKey = '';   // the poster may need a different size
     render();
+  }
+
+  // Portrait: the sign sits over the top of the frame and the title over the foot of the poster.
+  // Landscape: both sit in a column beside the poster. Moving the nodes keeps the HTML simple.
+  function placeBars(landscape) {
+    if (landscape) {
+      if (el.marquee.parentNode !== el.screenNow) {
+        el.screenNow.insertBefore(el.marquee, el.posterArea);
+        el.screenNow.appendChild(el.titles);
+      }
+    } else if (el.marquee.parentNode !== el.frame) {
+      el.frame.insertBefore(el.marquee, el.frameInner);
+      el.frameInner.appendChild(el.titles);
+    }
+  }
+
+  // Landscape: the poster area shrinks to the poster, and the column takes the rest of the width.
+  function fitColumn(layout) {
+    if (layout.orientation !== 'landscape') {
+      el.posterArea.style.width = '';
+      el.screenNow.style.paddingLeft = '';
+      return;
+    }
+    var edge = el.frame.offsetHeight - el.frameInner.offsetHeight;
+    var em = layout.baseFont;
+    var areaW = layout.posterW + edge;
+    el.posterArea.style.width = areaW + 'px';
+    var left = Math.round(0.5 * em + areaW + 1.2 * em);
+    el.screenNow.style.paddingLeft = left + 'px';
+    el.screenNow.style.paddingLeft = 'calc(' + left + 'px + env(safe-area-inset-left))';   // ignored where env() is missing
+  }
+
+  // Portrait: the title is one line. Shrink it until it fits the poster width.
+  // A very long title may use two lines at the smallest size, so it never gets cut.
+  function fitTitle() {
+    var t = el.title;
+    t.style.fontSize = '';
+    t.style.whiteSpace = '';
+    t.style.display = '';
+    t.style.webkitLineClamp = '';
+    if (!state.layout || state.layout.orientation !== 'portrait') return;
+    var base = state.layout.baseFont;
+    var size = 1.4 * base;
+    t.style.fontSize = size + 'px';
+    while (t.scrollWidth > t.clientWidth + 1 && size > 0.85 * base) {
+      size -= 1;
+      t.style.fontSize = size + 'px';
+    }
+    if (t.scrollWidth <= t.clientWidth + 1) return;
+    t.style.whiteSpace = 'normal';
+    t.style.display = '-webkit-box';
+    t.style.webkitLineClamp = '2';
+    size = 1.1 * base;
+    t.style.fontSize = size + 'px';
+    while (t.scrollHeight > t.clientHeight + 1 && size > 0.8 * base) {
+      size -= 1;
+      t.style.fontSize = size + 'px';
+    }
   }
 
   function updateLayout() {
@@ -149,16 +209,20 @@
     el.app.style.fontSize = next.baseFont + 'px';
     setClass(el.app, 'is-landscape', next.orientation === 'landscape');
     setClass(el.app, 'is-portrait', next.orientation === 'portrait');
+    placeBars(next.orientation === 'landscape');
+    el.posterArea.style.width = '';   // measure the whole free space, then fitColumn narrows it
+    el.screenNow.style.paddingLeft = '';
     var edge = el.frame.offsetHeight - el.frameInner.offsetHeight;   // the frame around the poster
     var areaW = el.posterArea.clientWidth - edge;
     var areaH = el.posterArea.clientHeight - edge;
-    // In landscape the poster has its own column. Keep a margin there, with room for the corner buttons.
-    if (next.orientation === 'landscape') { areaW = areaW * 0.92; areaH = areaH - 5.2 * next.baseFont; }
-    else areaH = areaH - 0.6 * next.baseFont;   // a small gap above the title
+    // Portrait: the sign hangs over the top edge of the frame, so leave room for it.
+    if (next.orientation === 'portrait') areaH = areaH - 1.2 * next.baseFont;
     if (areaW > 20 && areaH > 20) next = L.computeLayout(w, h, currentShape(), { w: areaW, h: areaH });
     var prev = state.layout;
     if (prev && prev.orientation === next.orientation && prev.posterW === next.posterW &&
         prev.posterH === next.posterH  && prev.baseFont === next.baseFont) {
+      fitColumn(prev);
+      fitTitle();
       return;
     }
     if (prev && prev.orientation !== next.orientation) {
